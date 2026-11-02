@@ -1,0 +1,105 @@
+[gd_scene format=3 uid="uid://yedo5seshwup"]
+
+[ext_resource type="Script" uid="uid://cpfkp2nwp4ad5" path="res://MainGame/monitor_screen.gd" id="1_0ichd"]
+
+[node name="MonitorScreen" type="Control" unique_id=1345708468]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0ichd")
+
+[node name="Background" type="ColorRect" parent="." unique_id=572489540]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.11764706, 0.11764706, 0.14117648, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=85855281]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=694095901]
+layout_mode = 2
+
+[node name="HeaderBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=605926655]
+layout_mode = 2
+
+[node name="TimeLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderBar" unique_id=1669851472]
+layout_mode = 2
+text = "08:00:00 AM"
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/HeaderBar" unique_id=570173777]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderBar" unique_id=19664425]
+layout_mode = 2
+text = "STATUS: NORMAL"
+
+[node name="MainSplit" type="HSplitContainer" parent="MarginContainer/VBoxContainer" unique_id=1141821451]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LogPanel" type="Panel" parent="MarginContainer/VBoxContainer/MainSplit" unique_id=489184669]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LogText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/MainSplit/LogPanel" unique_id=1595130609]
+layout_mode = 0
+offset_right = 362.0
+offset_bottom = 86.0
+scroll_following = true
+
+[node name="WorkArea" type="CenterContainer" parent="MarginContainer/VBoxContainer/MainSplit" unique_id=1626871374]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="LogButton" type="Button" parent="MarginContainer/VBoxContainer/MainSplit/WorkArea" unique_id=273980398]
+custom_minimum_size = Vector2(200, 80)
+layout_mode = 2
+text = "LOG EVENT"
+
+[node name="UpgradesBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1674434805]
+layout_mode = 2
+
+[node name="UpgradeAutoClicker" type="Button" parent="MarginContainer/VBoxContainer/UpgradesBar" unique_id=159303380]
+layout_mode = 2
+text = "AutoScript (Cost: 50s)"
+
+[node name="UpgradeMultiplier" type="Button" parent="MarginContainer/VBoxContainer/UpgradesBar" unique_id=171407170]
+layout_mode = 2
+text = "Overclock (Cost: 100s)"
+
+[node name="PopupContainer" type="Control" parent="." unique_id=1650393263]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ScreenGlitchOverlay" type="ColorRect" parent="." unique_id=551259401]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
