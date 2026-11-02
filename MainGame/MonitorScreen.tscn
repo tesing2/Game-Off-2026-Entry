@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://yedo5seshwup"]
+[gd_scene format=3 uid="uid://g0r57kt5e61h"]
 
-[ext_resource type="Script" uid="uid://cpfkp2nwp4ad5" path="res://MainGame/monitor_screen.gd" id="1_0ichd"]
+[ext_resource type="Script" uid="uid://cpfkp2nwp4ad5" path="res://MainGame/MainGame/monitor_screen.gd" id="1_0ichd"]
 
 [node name="MonitorScreen" type="Control" unique_id=1345708468]
 layout_mode = 3
@@ -85,13 +85,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="LogButton" type="Button" parent="MarginContainer/VBoxContainer/MainSplit/WorkArea" unique_id=273980398]
+[node name="LogButton" type="Button" parent="MarginContainer/VBoxContainer/MainSplit/WorkArea" unique_id=725353315]
 custom_minimum_size = Vector2(200, 80)
 layout_mode = 0
 offset_left = 268.0
 offset_right = 468.0
 offset_bottom = 80.0
-text = "LOG EVENT"
+text = "Log Data"
 
 [node name="UpgradesBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1674434805]
 layout_mode = 2

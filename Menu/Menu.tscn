@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://dido2u4pqfydf"]
+
+[ext_resource type="Script" uid="uid://b7uyfydyqew0a" path="res://Menu/Scripts/menu.gd" id="1_crea4"]
+[ext_resource type="Texture2D" uid="uid://bkrb8xxyaxqjd" path="res://MainGame/Buttons/StartNormal.png" id="1_u03px"]
+[ext_resource type="Texture2D" uid="uid://n7mlim8h3ptc" path="res://MainGame/Buttons/StartClick.png" id="2_crea4"]
+[ext_resource type="Texture2D" uid="uid://dxntr4j75iwy8" path="res://MainGame/Buttons/MainMenuBG.png" id="2_w32jx"]
+[ext_resource type="Texture2D" uid="uid://bnjojeom5nahy" path="res://MainGame/Buttons/StartHover.png" id="3_w32jx"]
+[ext_resource type="Texture2D" uid="uid://vae2xlafyeen" path="res://MainGame/Buttons/SettingsIdle.png" id="6_0cyjp"]
+[ext_resource type="Texture2D" uid="uid://x17ilg3sfp4b" path="res://MainGame/Buttons/SettingsClick.png" id="7_3c4i7"]
+[ext_resource type="Texture2D" uid="uid://ii4jan6x0vqy" path="res://MainGame/Buttons/SettingsHover.png" id="8_fipr7"]
+
+[node name="Menu" type="Control" unique_id=1831863114]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_crea4")
+
+[node name="Panel" type="Panel" parent="." unique_id=1421638661]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainMenuBg" type="Sprite2D" parent="Panel" unique_id=1982007300]
+position = Vector2(645, 352)
+texture = ExtResource("2_w32jx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=1618543700]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureButton" type="TextureButton" parent="Panel/VBoxContainer" unique_id=294403335]
+layout_mode = 2
+texture_normal = ExtResource("1_u03px")
+texture_pressed = ExtResource("2_crea4")
+texture_hover = ExtResource("3_w32jx")
+
+[node name="TextureButton2" type="TextureButton" parent="Panel/VBoxContainer" unique_id=945162378]
+layout_mode = 2
+texture_normal = ExtResource("6_0cyjp")
+texture_pressed = ExtResource("7_3c4i7")
+texture_hover = ExtResource("8_fipr7")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=236257490]
+
+[connection signal="pressed" from="Panel/VBoxContainer/TextureButton" to="." method="_on_texture_button_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/TextureButton2" to="." method="_on_texture_button_2_pressed"]
