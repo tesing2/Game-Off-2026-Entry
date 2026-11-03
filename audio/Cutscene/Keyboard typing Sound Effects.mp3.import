@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dv710f8or0xb7"
+path="res://.godot/imported/Keyboard typing Sound Effects.mp3-5994e2cd25c2a971c86493ba6217a7ef.mp3str"
+
+[deps]
+
+source_file="res://audio/Cutscene/Keyboard typing Sound Effects.mp3"
+dest_files=["res://.godot/imported/Keyboard typing Sound Effects.mp3-5994e2cd25c2a971c86493ba6217a7ef.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

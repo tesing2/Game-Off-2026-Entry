@@ -76,8 +76,8 @@ size_flags_horizontal = 3
 
 [node name="LogText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/MainSplit/LogPanel" unique_id=1595130609]
 layout_mode = 0
-offset_right = 362.0
-offset_bottom = 86.0
+offset_right = 446.0
+offset_bottom = 632.0
 scroll_following = true
 
 [node name="WorkArea" type="Control" parent="MarginContainer/VBoxContainer/MainSplit" unique_id=374091313]
@@ -93,22 +93,22 @@ offset_right = 468.0
 offset_bottom = 80.0
 text = "Log Data"
 
-[node name="UpgradesBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1674434805]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 10
+[node name="UpgradesBar" type="HBoxContainer" parent="." unique_id=1674434805]
+layout_mode = 0
+offset_left = 668.0
+offset_top = 205.0
+offset_right = 1022.0
+offset_bottom = 236.0
+size_flags_horizontal = 8
+size_flags_vertical = 6
 
-[node name="UpgradeAutoClicker" type="Button" parent="MarginContainer/VBoxContainer/UpgradesBar" unique_id=159303380]
+[node name="UpgradeAutoClicker" type="Button" parent="UpgradesBar" unique_id=159303380]
 layout_mode = 2
 text = "AutoScript (Cost: 50s)"
 
-[node name="UpgradeMultiplier" type="Button" parent="MarginContainer/VBoxContainer/UpgradesBar" unique_id=171407170]
+[node name="UpgradeMultiplier" type="Button" parent="UpgradesBar" unique_id=171407170]
 layout_mode = 2
 text = "Overclock (Cost: 100s)"
-
-[node name="UpgradeLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1658097247]
-layout_mode = 2
-text = "UPGRADES "
 
 [node name="PopupContainer" type="Control" parent="." unique_id=1650393263]
 layout_mode = 1
@@ -128,3 +128,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="UpgradeLabel" type="Label" parent="." unique_id=1658097247]
+layout_mode = 0
+offset_left = 806.0
+offset_top = 163.0
+offset_right = 894.0
+offset_bottom = 186.0
+size_flags_horizontal = 8
+text = "UPGRADES "

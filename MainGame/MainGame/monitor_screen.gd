@@ -9,6 +9,10 @@ var base_start_time: float = 28800.0  # 8:00 AM
 var end_seconds: float = 61200.0    # 5:00 PM
 var total_seconds: float = base_start_time
 
+# Audio cutscene typing effect
+var typing_audio_player: AudioStreamPlayer
+var type_sound: AudioStream = load("res://audio/Cutscene/Keyboard typing Sound Effects.mp3") 
+
 # Track actual work performed
 var work_progress: float = 0.0 
 var seconds_per_click: float = 180.0 
@@ -53,7 +57,7 @@ var whispers: Array[String] = [
 	"DON'T PUNCH OUT. THE SHIFT NEVER ENDS."
 ]
 
-# Load your MP3 voice files dynamically
+# Load your MP3 voice files dynamically matching your files
 var whisper_audio_streams: Array[AudioStream] = [
 	load("res://audio/1.mp3"),
 	load("res://audio/2.mp3"),
@@ -65,7 +69,6 @@ var whisper_audio_streams: Array[AudioStream] = [
 	load("res://audio/8.mp3"),
 	load("res://audio/9.mp3"),
 	load("res://audio/10.mp3"),
-
 ]
 
 # --- FEATURE 3: INFILTRATION POP-UP VARIABLES ---
@@ -103,15 +106,15 @@ var intro_texts: Array[String] = [
 @onready var temp_bar: ProgressBar = $MarginContainer/VBoxContainer/HeaderBar/TempBar
 @onready var log_text: RichTextLabel = $MarginContainer/VBoxContainer/MainSplit/LogPanel/LogText
 @onready var log_panel: Panel = $MarginContainer/VBoxContainer/MainSplit/LogPanel
-
 @onready var work_area: Control = $MarginContainer/VBoxContainer/MainSplit/WorkArea
 @onready var log_button: Button = $MarginContainer/VBoxContainer/MainSplit/WorkArea/LogButton
+
 @onready var bg_rect: ColorRect = $Background
 @onready var glitch_overlay: ColorRect = $ScreenGlitchOverlay
 @onready var popup_container: Control = $PopupContainer
 @onready var peripheral_container: Control = $PeripheralContainer
-@onready var btn_auto: Button = $MarginContainer/VBoxContainer/UpgradesBar/UpgradeAutoClicker
-@onready var btn_multi: Button = $MarginContainer/VBoxContainer/UpgradesBar/UpgradeMultiplier
+@onready var btn_auto: Button = $UpgradesBar/UpgradeAutoClicker
+@onready var btn_multi: Button = $UpgradesBar/UpgradeMultiplier
 
 var intro_layer: Control
 var intro_label: RichTextLabel
@@ -123,23 +126,33 @@ func _ready() -> void:
 	btn_auto.pressed.connect(_on_buy_auto_pressed)
 	btn_multi.pressed.connect(_on_buy_multi_pressed)
 	
+	typing_audio_player = AudioStreamPlayer.new()
+	if type_sound:
+		typing_audio_player.stream = type_sound
+	add_child(typing_audio_player)
+	
 	btn_auto.disabled = true
 	btn_multi.disabled = true
 	temp_bar.max_value = max_heat
 	temp_bar.value = 0
 	
-	# Apply CRT Terminal Panel Styling
+# Apply heavy CRT Terminal Panel Styling
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.02, 0.05, 0.03, 0.95)
-	style.border_color = Color(0.1, 0.4, 0.2, 1.0)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(6)
+	style.bg_color = Color(0.01, 0.03, 0.02, 0.98) # Deeper, darker void color
+	style.border_color = Color(0.15, 0.6, 0.3, 1.0) # Brighter, more ominous green border
+	style.set_border_width_all(3) # Thicker border for weight
+	style.set_corner_radius_all(4)
+	style.set_content_margin_all(15) # Gives text breathing room inside the giant box
 	log_panel.add_theme_stylebox_override("panel", style)
 	
-	log_text.add_theme_font_size_override("normal_font_size", 18)
-	log_text.add_theme_color_override("default_color", Color(0.3, 1.0, 0.5))
-	
+	log_text.add_theme_font_size_override("normal_font_size", 16)
+	log_text.add_theme_color_override("default_color", Color(0.4, 1.0, 0.6))
 	_setup_intro_ui()
+	
+	_add_log_entry("[color=cyan]========================================[/color]")
+	_add_log_entry("[color=cyan]   MAINFRAME KERNEL v4.02 // SECURE LOGIN   [/color]")
+	_add_log_entry("[color=cyan]   REMOTE SESSION ACTIVE: [UNKNOWN_IP]     [/color]")
+	_add_log_entry("[color=cyan]========================================[/color]\n")
 	
 	await get_tree().process_frame
 	_center_button()
@@ -150,6 +163,7 @@ func _input(event: InputEvent) -> void:
 			if is_typing:
 				is_typing = false
 				intro_label.text = current_full_text
+				typing_audio_player.stop()
 			else:
 				_advance_intro()
 	elif current_phase == ShiftPhase.GAMEOVER:
@@ -239,12 +253,19 @@ func _advance_intro() -> void:
 func _process(delta: float) -> void:
 	if current_phase == ShiftPhase.INTRO and is_typing:
 		type_timer += delta
-		if type_timer >= 0.02:
+		if type_timer >= 0.03: 
 			type_timer = 0.0
 			char_reveal_index += 1
 			intro_label.text = current_full_text.substr(0, char_reveal_index)
+			
+			if type_sound and not typing_audio_player.playing:
+				typing_audio_player.pitch_scale = randf_range(0.95, 1.05) 
+				typing_audio_player.play()
+				
 			if char_reveal_index >= current_full_text.length():
 				is_typing = false
+				typing_audio_player.stop() 
+		
 		intro_scanlines.color.a = 0.2 + randf_range(-0.06, 0.06)
 		return
 
@@ -262,6 +283,13 @@ func _process(delta: float) -> void:
 			heat = max(0.0, heat - (heat_decay_rate * delta))
 
 	temp_bar.value = heat
+
+	# Juice: Frantic heartbeat pulsing animation when heat is high
+	if heat >= 80.0:
+		var pulse_scale = 1.0 + sin(Time.get_ticks_msec() * 0.015) * 0.08
+		temp_bar.scale = Vector2(pulse_scale, pulse_scale)
+	else:
+		temp_bar.scale = Vector2(1.0, 1.0)
 
 	if current_phase == ShiftPhase.MIDDAY:
 		error_spawn_timer += delta
@@ -350,6 +378,13 @@ func _on_log_button_pressed() -> void:
 	tween.tween_property(log_button, "scale", Vector2(1.02, 1.02), 0.04)
 	tween.tween_property(log_button, "scale", Vector2(1.0, 1.0), 0.03)
 
+	# Juice: Screen jolt during Overtime clicks
+	if current_phase == ShiftPhase.OVERTIME:
+		var jolt = create_tween()
+		var rand_offset = Vector2(randf_range(-3, 3), randf_range(-3, 3))
+		jolt.tween_property(self, "position", rand_offset, 0.02)
+		jolt.tween_property(self, "position", Vector2.ZERO, 0.02)
+
 	if current_phase == ShiftPhase.MIDDAY and randf() < 0.35:
 		_flee_button()
 	elif current_phase == ShiftPhase.OVERTIME:
@@ -420,12 +455,13 @@ func _trigger_whisper() -> void:
 	var selected_whisper = whispers[selected_index]
 	_add_log_entry("[color=purple]> " + selected_whisper + "[/color]")
 	
-	var player = AudioStreamPlayer.new()
-	player.stream = whisper_audio_streams[selected_index]
-	add_child(player)
-	player.play()
-	player.finished.connect(player.queue_free)
-	
+	var stream = whisper_audio_streams[selected_index]
+	if stream != null:
+		var player = AudioStreamPlayer.new()
+		player.stream = stream
+		add_child(player)
+		player.play()
+		player.finished.connect(player.queue_free)
 
 func _spawn_infiltration_popup() -> void:
 	var prompt_data = infiltration_prompts.pick_random()
@@ -453,36 +489,164 @@ func _spawn_infiltration_popup() -> void:
 	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	vbox.add_child(hbox)
 	
-	var btn_yes = Button.new()
-	btn_yes.text = prompt_data["btn1"]
-	btn_yes.custom_minimum_size = Vector2(100, 45)
-	hbox.add_child(btn_yes)
-	
-	var btn_no = Button.new()
-	btn_no.text = prompt_data["btn2"]
-	btn_no.custom_minimum_size = Vector2(100, 45)
-	hbox.add_child(btn_no)
-	
-	btn_yes.pressed.connect(func():
-		heat = min(max_heat, heat + 25.0)
-		_add_log_entry("[color=red]REMOTE INFILTRATION ACKNOWLEDGED. THERMAL SURGE.[/color]")
-		panel.queue_free()
-	)
-	
-	btn_no.pressed.connect(func():
-		_add_log_entry("[color=green]INFILTRATION ATTEMPT REJECTED BY USER.[/color]")
-		panel.queue_free()
-	)
+	# If it's the security alert camera prompt, change the UI so the player has NO choice of escape
+	if prompt_data["title"] == "SECURITY ALERT":
+		desc_lbl.text = "[color=red]BYPASSING USER PERMISSION... CAMERA ACCESS FORCED.[/color]"
+		var force_btn = Button.new()
+		force_btn.text = "OK"
+		force_btn.custom_minimum_size = Vector2(160, 45)
+		force_btn.modulate = Color(1, 0.2, 0.2)
+		hbox.add_child(force_btn)
+		
+		force_btn.pressed.connect(func():
+			panel.queue_free()
+			_trigger_camera_feed_jump_scare()
+		)
+		
+		# Auto-trigger if they ignore it for 3 seconds
+		var auto_timer = get_tree().create_timer(3.0)
+		auto_timer.timeout.connect(func():
+			if is_instance_valid(panel):
+				panel.queue_free()
+				_trigger_camera_feed_jump_scare()
+		)
+	else:
+		# Standard interactive popups for other types
+		var btn_yes = Button.new()
+		btn_yes.text = prompt_data["btn1"]
+		btn_yes.custom_minimum_size = Vector2(100, 45)
+		hbox.add_child(btn_yes)
+		
+		var btn_no = Button.new()
+		btn_no.text = prompt_data["btn2"]
+		btn_no.custom_minimum_size = Vector2(100, 45)
+		hbox.add_child(btn_no)
+		
+		btn_yes.pressed.connect(func():
+			heat = min(max_heat, heat + 25.0)
+			_add_log_entry("[color=red]REMOTE INFILTRATION ACKNOWLEDGED. THERMAL SURGE.[/color]")
+			panel.queue_free()
+		)
+		
+		btn_no.pressed.connect(func():
+			_add_log_entry("[color=green]INFILTRATION ATTEMPT REJECTED BY USER.[/color]")
+			panel.queue_free()
+		)
 	
 	popup_container.add_child(panel)
+
+# --- INESCAPABLE CAMERA GLITCH (NON-FATAL ATMOSPHERE DETAIL) ---
+func _trigger_camera_feed_jump_scare() -> void:
+	_add_log_entry("[color=red]WARNING: LOCAL CAMERA STREAM ACTIVATED BY REMOTE HOST.[/color]")
+	
+	# Temporary layer that floats over the game without stopping it
+	var cam_layer = Control.new()
+	cam_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cam_layer.z_index = 300
+	
+	var bg = ColorRect.new()
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0, 0, 0, 0.92)
+	cam_layer.add_child(bg)
+	
+	var texture_rect = TextureRect.new()
+	texture_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	if ResourceLoader.exists("res://Sprites/Char (With BG).png"):
+		texture_rect.texture = load("res://Sprites/Char (With BG).png")
+	texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	cam_layer.add_child(texture_rect)
+	
+	var rec_label = Label.new()
+	rec_label.text = "🔴 REC [LIVE STREAM] - TARGET SPOTTED"
+	rec_label.position = Vector2(40, 30)
+	rec_label.add_theme_color_override("font_color", Color(1, 0, 0, 1))
+	cam_layer.add_child(rec_label)
+	
+	add_child(cam_layer)
+	
+	# Play a creepy voice or audio line
+	var jump_audio = AudioStreamPlayer.new()
+	if whisper_audio_streams.size() > 2 and whisper_audio_streams[2] != null:
+		jump_audio.stream = whisper_audio_streams[2]
+	add_child(jump_audio)
+	jump_audio.play()
+	
+	# Automatically dismisses after 3.5 seconds so the game keeps moving seamlessly
+	var auto_fade_timer = get_tree().create_timer(3.5)
+	auto_fade_timer.timeout.connect(func():
+		if is_instance_valid(cam_layer):
+			var fade_tween = create_tween()
+			fade_tween.tween_property(cam_layer, "modulate:a", 0.0, 0.5)
+			await fade_tween.finished
+			jump_audio.queue_free()
+			cam_layer.queue_free()
+			_add_log_entry("[color=yellow]CAMERA FEED MINIMIZED TO BACKGROUND BACKGROUND PROCESS.[/color]")
+	)
 
 func _check_phase_transitions() -> void:
 	if total_seconds >= 39600 and current_phase == ShiftPhase.MORNING:
 		current_phase = ShiftPhase.MIDDAY
-		status_label.text = "STATUS: ANOMALOUS"
-		status_label.add_theme_color_override("font_color", Color.YELLOW)
-		bg_rect.color = Color("#14191c")
-		_add_log_entry("[color=yellow]-- SYSTEM WARNING: UNUSUAL NETWORK TRAFFIC DETECTED --[/color]")
+		
+		# --- THE CINEMATIC RECKONING ---
+		status_label.text = "STATUS: INTERCEPTED"
+		status_label.add_theme_color_override("font_color", Color.RED)
+		bg_rect.color = Color(0.0, 0.0, 0.0, 1) # Pitch black abyss
+		glitch_overlay.visible = true
+		glitch_overlay.color = Color(1, 0, 0, 0.4) # Heavy, blinding red bleed
+		
+		# Lock down the entire interface so the player is completely trapped
+		log_button.disabled = true
+		log_button.modulate = Color(0.1, 0.1, 0.1)
+		
+		# Clear the screen to leave them in the dark
+		log_text.text = ""
+		
+		# Play a chilling voice line to set the atmosphere
+		var cutscene_audio = AudioStreamPlayer.new()
+		if whisper_audio_streams.size() > 5 and whisper_audio_streams[5] != null:
+			cutscene_audio.stream = whisper_audio_streams[5]
+		add_child(cutscene_audio)
+		cutscene_audio.play()
+
+		# Agonizing, slow, cinematic pacing that forces the player to watch in silence
+		_add_log_entry("[color=red]>>> KERNEL PANIC: CONNECTION HIJACKED.[/color]")
+		await get_tree().create_timer(2.0).timeout
+		
+		if current_phase != ShiftPhase.MIDDAY: return
+		_add_log_entry("[color=gray]Did you really think you could run away from what you broke?[/color]")
+		await get_tree().create_timer(3.0).timeout
+		
+		if current_phase != ShiftPhase.MIDDAY: return
+		_add_log_entry("[color=red]You changed your phone. You changed your name. You thought you were safe.[/color]")
+		await get_tree().create_timer(3.2).timeout
+		
+		if current_phase != ShiftPhase.MIDDAY: return
+		_add_log_entry("[color=white]Every click you made today wasn't data entry. It was a countdown.[/color]")
+		await get_tree().create_timer(3.5).timeout
+		
+		if current_phase != ShiftPhase.MIDDAY: return
+		_add_log_entry("[color=red]I am not a virus. I am your past, and I am finally catching up.[/color]")
+		await get_tree().create_timer(4.0).timeout
+		
+		if current_phase != ShiftPhase.MIDDAY: return
+		_add_log_entry("[color=yellow]----------------------------------------------------[/color]")
+		_add_log_entry("[color=red]STATUS: ANOMALOUS. THERE IS NO WAY OUT OF THIS SHIFT.[/color]")
+		
+		# Final lingering pause to let the dread completely settle
+		await get_tree().create_timer(3.0).timeout
+		
+		if current_phase == ShiftPhase.MIDDAY:
+			if is_instance_valid(cutscene_audio):
+				cutscene_audio.queue_free()
+			
+			log_button.disabled = false
+			log_button.modulate = Color.WHITE
+			status_label.text = "STATUS: ANOMALOUS"
+			bg_rect.color = Color("#14191c")
+			glitch_overlay.color = Color(1, 0, 0, 0.08)
+			
+			_add_log_entry("\n[color=cyan]-- TERMINAL FORCED OPEN. CONTINUE YOUR WORK. --[/color]")
 
 	elif total_seconds >= 50400 and current_phase == ShiftPhase.MIDDAY:
 		current_phase = ShiftPhase.OVERTIME
@@ -494,7 +658,7 @@ func _check_phase_transitions() -> void:
 		log_button.text = "LOG FLESH"
 		heat_per_click = 30.0 
 		_add_log_entry("[color=red]-- FACILITY LOCKDOWN ACTIVE. ALL PERSONNEL REMAIN AT DESKS. --[/color]")
-
+			
 func _check_upgrade_availability() -> void:
 	if btn_auto.disabled and auto_clicker_rate == 0 and work_progress >= auto_cost:
 		btn_auto.disabled = false
@@ -583,7 +747,6 @@ func _trigger_game_over(reason: String) -> void:
 	popup_container.add_child(restart_btn)
 
 # --- FEATURE 4: MANDATORY CLOCK-OUT FINAL CHOICE TWIST ---
-# --- FEATURE 4: MANDATORY CLOCK-OUT FINAL CHOICE TWIST ---
 func _trigger_ending() -> void:
 	current_phase = ShiftPhase.ENDING
 	time_label.text = "05:00:00 PM"
@@ -599,7 +762,6 @@ func _trigger_ending() -> void:
 	log_button.visible = false
 	_add_log_entry("[color=green]SHIFT FINISHED. CHOOSE YOUR EXIT CONTRACT.[/color]")
 	
-	# Spawn the twisted multiple-choice options centered on screen
 	var choices = [
 		{"text": "PUNCH OUT (EXIT)", "real": true, "color": Color(0.2, 1.0, 0.3)},
 		{"text": "STAY SEATED", "real": false, "color": Color(1.0, 0.3, 0.3)},
@@ -608,7 +770,6 @@ func _trigger_ending() -> void:
 	]
 	choices.shuffle()
 	
-	# Using CenterContainer inside popup_container to guarantee perfect centering
 	var center_box = CenterContainer.new()
 	center_box.set_anchors_preset(Control.PRESET_FULL_RECT)
 	popup_container.add_child(center_box)

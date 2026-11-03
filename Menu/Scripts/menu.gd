@@ -8,7 +8,6 @@ func _on_texture_button_pressed() -> void:
 	_play_click_and_change_scene(game_scene_path)
 
 
-
 func _play_click_and_change_scene(target_path: String) -> void:
 	if click_sound_player.stream:
 		click_sound_player.play()
