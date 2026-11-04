@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Clicker game"
-run/main_scene="uid://g0r57kt5e61h"
+run/main_scene="uid://dido2u4pqfydf"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+BgSound="*uid://dhuuphb5puojc"
 
 [display]
 

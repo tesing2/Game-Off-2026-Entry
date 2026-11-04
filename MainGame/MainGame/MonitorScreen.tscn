@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://yedo5seshwup"]
 
-[ext_resource type="Script" uid="uid://cpfkp2nwp4ad5" path="res://MainGame/monitor_screen.gd" id="1_0ichd"]
+[ext_resource type="Script" path="res://MainGame/monitor_screen.gd" id="1_0ichd"]
 
 [node name="MonitorScreen" type="Control" unique_id=1345708468]
 layout_mode = 3

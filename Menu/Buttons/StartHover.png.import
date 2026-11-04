@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bkrb8xxyaxqjd"
-path="res://.godot/imported/StartNormal.png-976f437773b49cf89aa429aabd68ac1c.ctex"
+uid="uid://bnjojeom5nahy"
+path="res://.godot/imported/StartHover.png-c8b65d23495be60a8240a6be320a89e1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://MainGame/Buttons/StartNormal.png"
-dest_files=["res://.godot/imported/StartNormal.png-976f437773b49cf89aa429aabd68ac1c.ctex"]
+source_file="res://Menu/Buttons/StartHover.png"
+dest_files=["res://.godot/imported/StartHover.png-c8b65d23495be60a8240a6be320a89e1.ctex"]
 
 [params]
 

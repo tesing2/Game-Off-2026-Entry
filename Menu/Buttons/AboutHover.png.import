@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://n7mlim8h3ptc"
-path="res://.godot/imported/StartClick.png-2c433c34b63c2f64ee7417815cdb7064.ctex"
+uid="uid://280y0ko1bskr"
+path="res://.godot/imported/AboutHover.png-5c1fb7b3a6315dba390712baed6bb99a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://MainGame/Buttons/StartClick.png"
-dest_files=["res://.godot/imported/StartClick.png-2c433c34b63c2f64ee7417815cdb7064.ctex"]
+source_file="res://Menu/Buttons/AboutHover.png"
+dest_files=["res://.godot/imported/AboutHover.png-5c1fb7b3a6315dba390712baed6bb99a.ctex"]
 
 [params]
 

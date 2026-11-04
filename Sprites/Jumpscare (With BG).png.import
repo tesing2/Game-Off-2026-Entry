@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vae2xlafyeen"
-path="res://.godot/imported/SettingsIdle.png-52554346431b73b37bbcabbdfc92ad1a.ctex"
+uid="uid://dibat1s2n2epx"
+path="res://.godot/imported/Jumpscare (With BG).png-013994b761a9aacb6b462d5c6ac1a899.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://MainGame/Buttons/SettingsIdle.png"
-dest_files=["res://.godot/imported/SettingsIdle.png-52554346431b73b37bbcabbdfc92ad1a.ctex"]
+source_file="res://Sprites/Jumpscare (With BG).png"
+dest_files=["res://.godot/imported/Jumpscare (With BG).png-013994b761a9aacb6b462d5c6ac1a899.ctex"]
 
 [params]
 

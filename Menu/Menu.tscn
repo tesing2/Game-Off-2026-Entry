@@ -1,13 +1,19 @@
 [gd_scene format=3 uid="uid://dido2u4pqfydf"]
 
 [ext_resource type="Script" uid="uid://b7uyfydyqew0a" path="res://Menu/Scripts/menu.gd" id="1_crea4"]
-[ext_resource type="Texture2D" uid="uid://bkrb8xxyaxqjd" path="res://MainGame/Buttons/StartNormal.png" id="1_u03px"]
-[ext_resource type="Texture2D" uid="uid://n7mlim8h3ptc" path="res://MainGame/Buttons/StartClick.png" id="2_crea4"]
-[ext_resource type="Texture2D" uid="uid://dxntr4j75iwy8" path="res://MainGame/Buttons/MainMenuBG.png" id="2_w32jx"]
-[ext_resource type="Texture2D" uid="uid://bnjojeom5nahy" path="res://MainGame/Buttons/StartHover.png" id="3_w32jx"]
-[ext_resource type="Texture2D" uid="uid://vae2xlafyeen" path="res://MainGame/Buttons/SettingsIdle.png" id="6_0cyjp"]
-[ext_resource type="Texture2D" uid="uid://x17ilg3sfp4b" path="res://MainGame/Buttons/SettingsClick.png" id="7_3c4i7"]
-[ext_resource type="Texture2D" uid="uid://ii4jan6x0vqy" path="res://MainGame/Buttons/SettingsHover.png" id="8_fipr7"]
+[ext_resource type="Texture2D" uid="uid://bkrb8xxyaxqjd" path="res://Menu/Buttons/StartNormal.png" id="1_u03px"]
+[ext_resource type="Texture2D" uid="uid://n7mlim8h3ptc" path="res://Menu/Buttons/StartClick.png" id="2_crea4"]
+[ext_resource type="Texture2D" uid="uid://dxntr4j75iwy8" path="res://Menu/Buttons/MainMenuBG.png" id="2_w32jx"]
+[ext_resource type="Texture2D" uid="uid://bnjojeom5nahy" path="res://Menu/Buttons/StartHover.png" id="3_w32jx"]
+[ext_resource type="Texture2D" uid="uid://vae2xlafyeen" path="res://Menu/Buttons/SettingsIdle.png" id="6_0cyjp"]
+[ext_resource type="Texture2D" uid="uid://x17ilg3sfp4b" path="res://Menu/Buttons/SettingsClick.png" id="7_3c4i7"]
+[ext_resource type="Texture2D" uid="uid://ii4jan6x0vqy" path="res://Menu/Buttons/SettingsHover.png" id="8_fipr7"]
+[ext_resource type="PackedScene" uid="uid://shashwwc3rns" path="res://audio/UI/clicker.tscn" id="9_8iu1u"]
+[ext_resource type="Texture2D" uid="uid://bigcv55tppqsf" path="res://Menu/Buttons/AboutIdle.png" id="9_e4kd3"]
+[ext_resource type="PackedScene" uid="uid://dhuuphb5puojc" path="res://audio/ThemeMusic/bg_sound.tscn" id="9_fipr7"]
+[ext_resource type="Texture2D" uid="uid://ci0nbtuflo1ep" path="res://Menu/Buttons/AboutClick.png" id="10_5t8sb"]
+[ext_resource type="AudioStream" uid="uid://ick17nkmkmor" path="res://audio/ThemeMusic/bg.mp3" id="10_62dhm"]
+[ext_resource type="Texture2D" uid="uid://280y0ko1bskr" path="res://Menu/Buttons/AboutHover.png" id="11_p7c5i"]
 
 [node name="Menu" type="Control" unique_id=1831863114]
 layout_mode = 3
@@ -27,7 +33,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainMenuBg" type="Sprite2D" parent="Panel" unique_id=1982007300]
-position = Vector2(645, 352)
+position = Vector2(640, 360)
 texture = ExtResource("2_w32jx")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=1618543700]
@@ -56,7 +62,18 @@ texture_normal = ExtResource("6_0cyjp")
 texture_pressed = ExtResource("7_3c4i7")
 texture_hover = ExtResource("8_fipr7")
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=236257490]
+[node name="TextureButton3" type="TextureButton" parent="Panel/VBoxContainer" unique_id=1052220143]
+layout_mode = 2
+texture_normal = ExtResource("9_e4kd3")
+texture_pressed = ExtResource("10_5t8sb")
+texture_hover = ExtResource("11_p7c5i")
+
+[node name="Clicker" parent="." unique_id=640047517 instance=ExtResource("9_8iu1u")]
+
+[node name="BgSound" parent="." unique_id=1266362506 instance=ExtResource("9_fipr7")]
+stream = ExtResource("10_62dhm")
+volume_db = 9.28
 
 [connection signal="pressed" from="Panel/VBoxContainer/TextureButton" to="." method="_on_texture_button_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/TextureButton2" to="." method="_on_texture_button_2_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/TextureButton3" to="." method="_on_texture_button_3_pressed"]

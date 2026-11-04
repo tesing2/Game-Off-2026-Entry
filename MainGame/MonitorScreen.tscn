@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://g0r57kt5e61h"]
 
 [ext_resource type="Script" uid="uid://cpfkp2nwp4ad5" path="res://MainGame/MainGame/monitor_screen.gd" id="1_0ichd"]
+[ext_resource type="AudioStream" uid="uid://bs6bi2nbkp4hv" path="res://audio/UI/toggle_on.wav" id="2_6bvea"]
+[ext_resource type="PackedScene" uid="uid://shashwwc3rns" path="res://audio/UI/clicker.tscn" id="3_hd1oy"]
 
 [node name="MonitorScreen" type="Control" unique_id=1345708468]
 layout_mode = 3
@@ -137,3 +139,8 @@ offset_right = 894.0
 offset_bottom = 186.0
 size_flags_horizontal = 8
 text = "UPGRADES "
+
+[node name="Clickerv2" type="AudioStreamPlayer2D" parent="." unique_id=1897399265]
+stream = ExtResource("2_6bvea")
+
+[node name="Clicker" parent="." unique_id=640047517 instance=ExtResource("3_hd1oy")]

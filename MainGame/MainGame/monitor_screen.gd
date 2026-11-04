@@ -108,6 +108,8 @@ var intro_texts: Array[String] = [
 @onready var log_panel: Panel = $MarginContainer/VBoxContainer/MainSplit/LogPanel
 @onready var work_area: Control = $MarginContainer/VBoxContainer/MainSplit/WorkArea
 @onready var log_button: Button = $MarginContainer/VBoxContainer/MainSplit/WorkArea/LogButton
+@onready var clickerv_2: AudioStreamPlayer2D = $Clickerv2
+@onready var clicker: AudioStreamPlayer2D = $Clicker
 
 @onready var bg_rect: ColorRect = $Background
 @onready var glitch_overlay: ColorRect = $ScreenGlitchOverlay
@@ -353,6 +355,10 @@ func _advance_time(amount: float) -> void:
 	_check_upgrade_availability()
 
 func _on_log_button_pressed() -> void:
+	if clickerv_2.stream:
+		clickerv_2.play()
+
+
 	if current_phase == ShiftPhase.INTRO or current_phase == ShiftPhase.ENDING or current_phase == ShiftPhase.GAMEOVER or is_overheated:
 		return
 		
@@ -602,12 +608,12 @@ func _check_phase_transitions() -> void:
 		# Clear the screen to leave them in the dark
 		log_text.text = ""
 		
-		# Play a chilling voice line to set the atmosphere
-		var cutscene_audio = AudioStreamPlayer.new()
-		if whisper_audio_streams.size() > 5 and whisper_audio_streams[5] != null:
-			cutscene_audio.stream = whisper_audio_streams[5]
-		add_child(cutscene_audio)
-		cutscene_audio.play()
+		## Play a chilling voice line to set the atmosphere
+		#var cutscene_audio = AudioStreamPlayer.new()
+		#if whisper_audio_streams.size() > 5 and whisper_audio_streams[5] != null:
+			#cutscene_audio.stream = whisper_audio_streams[5]
+		#add_child(cutscene_audio)
+		#cutscene_audio.play()
 
 		# Agonizing, slow, cinematic pacing that forces the player to watch in silence
 		_add_log_entry("[color=red]>>> KERNEL PANIC: CONNECTION HIJACKED.[/color]")
@@ -637,9 +643,9 @@ func _check_phase_transitions() -> void:
 		await get_tree().create_timer(3.0).timeout
 		
 		if current_phase == ShiftPhase.MIDDAY:
-			if is_instance_valid(cutscene_audio):
-				cutscene_audio.queue_free()
-			
+			#if is_instance_valid(cutscene_audio):
+				#cutscene_audio.queue_free()
+			#
 			log_button.disabled = false
 			log_button.modulate = Color.WHITE
 			status_label.text = "STATUS: ANOMALOUS"
@@ -666,12 +672,18 @@ func _check_upgrade_availability() -> void:
 		btn_multi.disabled = false
 
 func _on_buy_auto_pressed() -> void:
+	if clicker.stream:
+		clicker.play()
+
+
 	if work_progress >= auto_cost:
 		auto_clicker_rate += 15.0 
 		_add_log_entry("UPGRADE PURCHASED: AutoScript.vbs installed.")
 		btn_auto.disabled = true
 
 func _on_buy_multi_pressed() -> void:
+	if clicker.stream:
+		clicker.play()
 	if work_progress >= multi_cost:
 		seconds_per_click += 180.0 
 		_add_log_entry("UPGRADE PURCHASED: Overclock CPU executed.")

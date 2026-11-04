@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dhuuphb5puojc"]
+
+[ext_resource type="AudioStream" uid="uid://t7i3mnfeaess" path="res://audio/ThemeMusic/Bg.mp3" id="1_b2sps"]
+
+[node name="BgSound" type="AudioStreamPlayer2D" unique_id=1266362506]
+stream = ExtResource("1_b2sps")
+volume_db = 4.86
+autoplay = true

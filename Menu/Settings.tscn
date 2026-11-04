@@ -1,5 +1,9 @@
 [gd_scene format=3 uid="uid://bctsc3ylwd8pm"]
 
+[ext_resource type="PackedScene" uid="uid://shashwwc3rns" path="res://audio/UI/clicker.tscn" id="1_cx5vk"]
+
 [node name="Settings" type="Control" unique_id=845198415]
 layout_mode = 3
 anchors_preset = 0
+
+[node name="Clicker" parent="." unique_id=640047517 instance=ExtResource("1_cx5vk")]

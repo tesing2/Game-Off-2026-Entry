@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://shashwwc3rns"]
+
+[ext_resource type="AudioStream" uid="uid://dfupdfue3om3b" path="res://audio/UI/sci_fi_confirm.wav" id="1_bivql"]
+
+[node name="Clicker" type="AudioStreamPlayer2D" unique_id=640047517]
+stream = ExtResource("1_bivql")
