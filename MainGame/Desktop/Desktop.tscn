@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://b2tr6qh2ykgqo"]
+
+[ext_resource type="Texture2D" uid="uid://dabkblvtua6dk" path="res://MainGame/Desktop/Desktop (Normal).png" id="1_dd42l"]
+[ext_resource type="Script" uid="uid://bfqphrq71bmw5" path="res://MainGame/Desktop/desktop.gd" id="1_hldqa"]
+[ext_resource type="Shader" uid="uid://d37ttok1j7vd3" path="res://shader/crt_glitch.gdshader" id="3_lor2r"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n7lnv"]
+shader = ExtResource("3_lor2r")
+shader_parameter/scanline_count = 400.0
+shader_parameter/glitch_intensity = 0.0
+
+[node name="Desktop" type="Control" unique_id=667446364]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hldqa")
+
+[node name="Panel" type="Panel" parent="." unique_id=970995892]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TerminalButton" type="Button" parent="Panel" unique_id=217233754]
+layout_mode = 0
+offset_left = 995.0
+offset_top = 384.0
+offset_right = 1075.0
+offset_bottom = 441.0
+
+[node name="BackgroundDesktop" type="Sprite2D" parent="Panel" unique_id=170006695]
+position = Vector2(642, 359)
+texture = ExtResource("1_dd42l")
+
+[node name="IntroPanel" type="Panel" parent="." unique_id=489012189]
+layout_mode = 0
+offset_top = 556.0
+offset_right = 1280.0
+offset_bottom = 668.0
+
+[node name="IntroLabel" type="RichTextLabel" parent="IntroPanel" unique_id=1481896476]
+layout_mode = 0
+offset_left = 2.0
+offset_top = -2.0
+offset_right = 1285.0
+offset_bottom = 113.0
+
+[node name="CRTOverlay" type="ColorRect" parent="." unique_id=1651662951]
+material = SubResource("ShaderMaterial_n7lnv")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[connection signal="pressed" from="Panel/TerminalButton" to="." method="_on_terminal_pressed"]

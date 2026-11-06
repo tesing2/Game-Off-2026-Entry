@@ -3,6 +3,13 @@
 [ext_resource type="Script" uid="uid://cpfkp2nwp4ad5" path="res://MainGame/MainGame/monitor_screen.gd" id="1_0ichd"]
 [ext_resource type="AudioStream" uid="uid://bs6bi2nbkp4hv" path="res://audio/UI/toggle_on.wav" id="2_6bvea"]
 [ext_resource type="PackedScene" uid="uid://shashwwc3rns" path="res://audio/UI/clicker.tscn" id="3_hd1oy"]
+[ext_resource type="Texture2D" uid="uid://bvjt2ccc5q4a" path="res://MainGame/Desktop/Desktop (Terminal).png" id="4_1yxhe"]
+[ext_resource type="Shader" uid="uid://d37ttok1j7vd3" path="res://shader/crt_glitch.gdshader" id="5_s6txe"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j4mt1"]
+shader = ExtResource("5_s6txe")
+shader_parameter/scanline_count = 400.0
+shader_parameter/glitch_intensity = 0.0
 
 [node name="MonitorScreen" type="Control" unique_id=1345708468]
 layout_mode = 3
@@ -30,77 +37,86 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.11764706, 0.11764706, 0.14117648, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=85855281]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
+[node name="Terminal" type="Sprite2D" parent="." unique_id=737375558]
+position = Vector2(639, 360)
+texture = ExtResource("4_1yxhe")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=694095901]
-layout_mode = 2
+[node name="HeaderBar" type="HBoxContainer" parent="Terminal" unique_id=605926655]
+offset_left = -611.0
+offset_top = -311.0
+offset_right = 629.0
+offset_bottom = -284.0
 
-[node name="HeaderBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=605926655]
-layout_mode = 2
-
-[node name="TimeLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderBar" unique_id=1669851472]
+[node name="TimeLabel" type="Label" parent="Terminal/HeaderBar" unique_id=1669851472]
 layout_mode = 2
 text = "08:00:00 AM"
 
-[node name="PanicMenter" type="Label" parent="MarginContainer/VBoxContainer/HeaderBar" unique_id=1654716247]
+[node name="PanicMenter" type="Label" parent="Terminal/HeaderBar" unique_id=1654716247]
 layout_mode = 2
 text = "| Panic Meter:"
 
-[node name="TempBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HeaderBar" unique_id=625055496]
+[node name="TempBar" type="ProgressBar" parent="Terminal/HeaderBar" unique_id=625055496]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 
-[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/HeaderBar" unique_id=570173777]
+[node name="Spacer" type="Control" parent="Terminal/HeaderBar" unique_id=570173777]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="StatusLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderBar" unique_id=19664425]
+[node name="StatusLabel" type="Label" parent="Terminal/HeaderBar" unique_id=19664425]
 layout_mode = 2
 text = "STATUS: NORMAL"
 
-[node name="MainSplit" type="HSplitContainer" parent="MarginContainer/VBoxContainer" unique_id=1141821451]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="LogPanel" type="Panel" parent="MarginContainer/VBoxContainer/MainSplit" unique_id=489184669]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="LogText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/MainSplit/LogPanel" unique_id=1595130609]
-layout_mode = 0
-offset_right = 446.0
-offset_bottom = 632.0
-scroll_following = true
-
-[node name="WorkArea" type="Control" parent="MarginContainer/VBoxContainer/MainSplit" unique_id=374091313]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="WorkArea" type="Control" parent="Terminal" unique_id=374091313]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -640.0
+offset_top = 99.0
+offset_right = -640.0
+offset_bottom = -518.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_stretch_ratio = 2.0
 
-[node name="LogButton" type="Button" parent="MarginContainer/VBoxContainer/MainSplit/WorkArea" unique_id=725353315]
+[node name="LogButton" type="Button" parent="Terminal/WorkArea" unique_id=725353315]
 custom_minimum_size = Vector2(200, 80)
-layout_mode = 0
-offset_left = 268.0
-offset_right = 468.0
-offset_bottom = 80.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.72700006
+anchor_right = 0.5
+anchor_bottom = 0.72700006
+offset_left = -86.0
+offset_top = -62.881012
+offset_right = 114.0
+offset_bottom = 17.118988
+grow_horizontal = 2
+grow_vertical = 2
 text = "Log Data"
+
+[node name="LogPanel" type="Panel" parent="Terminal" unique_id=489184669]
+offset_left = -619.0
+offset_top = -340.0
+offset_right = -212.0
+offset_bottom = -340.0
+size_flags_horizontal = 3
+
+[node name="LogText" type="RichTextLabel" parent="Terminal/LogPanel" unique_id=1595130609]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 83.0
+offset_right = 1224.0
+offset_bottom = 341.0
+scroll_following = true
 
 [node name="UpgradesBar" type="HBoxContainer" parent="." unique_id=1674434805]
 layout_mode = 0
-offset_left = 668.0
-offset_top = 205.0
-offset_right = 1022.0
-offset_bottom = 236.0
+offset_left = 475.0
+offset_top = 585.0
+offset_right = 829.0
+offset_bottom = 616.0
 size_flags_horizontal = 8
 size_flags_vertical = 6
 
@@ -133,10 +149,10 @@ mouse_filter = 2
 
 [node name="UpgradeLabel" type="Label" parent="." unique_id=1658097247]
 layout_mode = 0
-offset_left = 806.0
-offset_top = 163.0
-offset_right = 894.0
-offset_bottom = 186.0
+offset_left = 606.0
+offset_top = 559.0
+offset_right = 694.0
+offset_bottom = 582.0
 size_flags_horizontal = 8
 text = "UPGRADES "
 
@@ -144,3 +160,13 @@ text = "UPGRADES "
 stream = ExtResource("2_6bvea")
 
 [node name="Clicker" parent="." unique_id=640047517 instance=ExtResource("3_hd1oy")]
+
+[node name="CRTOverlay" type="ColorRect" parent="." unique_id=1927737092]
+material = SubResource("ShaderMaterial_j4mt1")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

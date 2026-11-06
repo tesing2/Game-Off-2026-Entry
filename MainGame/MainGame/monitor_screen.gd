@@ -280,16 +280,16 @@ var intro_texts: Array[String] = [
 # =============================================================================
 # NODE REFERENCES
 # =============================================================================
-@onready var time_label: Label = $MarginContainer/VBoxContainer/HeaderBar/TimeLabel
-@onready var status_label: Label = $MarginContainer/VBoxContainer/HeaderBar/StatusLabel
-@onready var temp_bar: ProgressBar = $MarginContainer/VBoxContainer/HeaderBar/TempBar
-@onready var log_text: RichTextLabel = $MarginContainer/VBoxContainer/MainSplit/LogPanel/LogText
-@onready var log_panel: Panel = $MarginContainer/VBoxContainer/MainSplit/LogPanel
-@onready var work_area: Control = $MarginContainer/VBoxContainer/MainSplit/WorkArea
-@onready var log_button: Button = $MarginContainer/VBoxContainer/MainSplit/WorkArea/LogButton
+@onready var time_label: Label = $Terminal/HeaderBar/TimeLabel
+@onready var status_label: Label = $Terminal/HeaderBar/StatusLabel
+@onready var temp_bar: ProgressBar = $Terminal/HeaderBar/TempBar
+@onready var log_text: RichTextLabel = $Terminal/LogPanel/LogText
+@onready var log_panel: Panel = $Terminal/LogPanel
+@onready var work_area: Control = $Terminal/WorkArea
+@onready var log_button: Button = $Terminal/WorkArea/LogButton
+
 @onready var clicker_v2: AudioStreamPlayer2D = $Clickerv2
 @onready var clicker: AudioStreamPlayer2D = $Clicker
-
 @onready var bg_rect: ColorRect = $Background
 @onready var glitch_overlay: ColorRect = $ScreenGlitchOverlay
 @onready var popup_container: Control = $PopupContainer
@@ -343,9 +343,10 @@ func _ready() -> void:
 		_setup_intro_ui()
 
 	await get_tree().process_frame
-	_center_button()
+
 	temp_bar.pivot_offset = temp_bar.size / 2.0
 	log_button.pivot_offset = log_button.size / 2.0
+	
 
 
 func _load_audio() -> void:

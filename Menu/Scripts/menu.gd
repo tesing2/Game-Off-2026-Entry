@@ -1,13 +1,13 @@
 extends Control
 
-@export var game_scene_path := "res://MainGame/MonitorScreen.tscn"
+@export var game_scene_desktop := "res://MainGame/Desktop/Desktop.tscn"
 @export var game_scene_path_settings := "res://Menu/Settings.tscn"
 @export var game_scene_path_about := "res://Menu/about.tscn"
 @onready var clicker: AudioStreamPlayer2D = $Clicker
 
 
 func _on_texture_button_pressed() -> void:
-	_play_click_and_change_scene(game_scene_path)
+	_play_click_and_change_scene(game_scene_desktop)
 
 
 func _play_click_and_change_scene(target_path: String) -> void:
