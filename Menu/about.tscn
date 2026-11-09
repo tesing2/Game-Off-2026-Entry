@@ -1,5 +1,9 @@
 [gd_scene format=3 uid="uid://clwf5fownpvrq"]
 
+[ext_resource type="Script" uid="uid://bajube38koa6o" path="res://Menu/about.gd" id="1_7jlus"]
+[ext_resource type="Texture2D" uid="uid://gbq7ajvd85hg" path="res://Menu/Buttons/Main Menu (NoTitle).png" id="1_krf7e"]
+[ext_resource type="PackedScene" uid="uid://shashwwc3rns" path="res://audio/UI/clicker.tscn" id="3_cs8to"]
+
 [node name="About" type="Control" unique_id=305098123]
 layout_mode = 3
 anchors_preset = 15
@@ -7,6 +11,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_7jlus")
 
 [node name="Panel" type="Panel" parent="." unique_id=1892813837]
 layout_mode = 1
@@ -15,3 +20,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Panel" unique_id=1342099120]
+position = Vector2(640, 360)
+texture = ExtResource("1_krf7e")
+
+[node name="Clicker" parent="." unique_id=640047517 instance=ExtResource("3_cs8to")]

@@ -1,0 +1,98 @@
+[gd_scene format=3 uid="uid://bjwaf5g3kq6es"]
+
+[ext_resource type="Script" uid="uid://cxst2cx8x2w3k" path="res://Menu/settings_menu.gd" id="1_acstm"]
+[ext_resource type="Texture2D" uid="uid://gbq7ajvd85hg" path="res://Menu/Buttons/Main Menu (NoTitle).png" id="1_t3af0"]
+[ext_resource type="FontFile" uid="uid://ctmn3egl2abie" path="res://Fonts/Bloodstreak - Demo.otf" id="2_acstm"]
+[ext_resource type="PackedScene" uid="uid://shashwwc3rns" path="res://audio/UI/clicker.tscn" id="4_8thjy"]
+
+[node name="SettingsMenu" type="Control" unique_id=2065552730]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_acstm")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1175349623]
+position = Vector2(644, 356)
+texture = ExtResource("1_t3af0")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=656686449]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -225.0
+offset_right = 250.0
+offset_bottom = 225.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=23235454]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1100691153]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=761285967]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_acstm")
+theme_override_font_sizes/font_size = 50
+text = "[ SYSTEM SETTINGS ]"
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=998099372]
+layout_mode = 2
+
+[node name="MasterLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1254150433]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_acstm")
+text = "Master Volume"
+
+[node name="MasterSlider" type="HSlider" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=478290995]
+layout_mode = 2
+max_value = 1.0
+step = 0.5
+
+[node name="SFXLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=663187165]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_acstm")
+text = "SFX Volume "
+
+[node name="SFXSlider" type="HSlider" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=933089353]
+layout_mode = 2
+max_value = 1.0
+step = 0.5
+
+[node name="CRTToggle" type="CheckButton" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1637645350]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_acstm")
+text = "CRT Scanline Glitch"
+
+[node name="FullscreenToggle" type="CheckButton" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=848262448]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_acstm")
+text = "Fullscreen Mode
+"
+
+[node name="Spacer" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1137621897]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=154354939]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_acstm")
+text = "APPLY & RETURN"
+
+[node name="Clicker" parent="." unique_id=640047517 instance=ExtResource("4_8thjy")]
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

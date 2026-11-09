@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bkrb8xxyaxqjd"
-path="res://.godot/imported/StartNormal.png-f299b5eda48fe751a7c44b5c5caf54bf.ctex"
+uid="uid://gjin336bb0at"
+path="res://.godot/imported/Back (Hover) (1).png-a6c0fb5f7d23f5f94861b1dfdbdfeb16.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Menu/Buttons/StartNormal.png"
-dest_files=["res://.godot/imported/StartNormal.png-f299b5eda48fe751a7c44b5c5caf54bf.ctex"]
+source_file="res://Menu/Buttons/Back (Hover) (1).png"
+dest_files=["res://.godot/imported/Back (Hover) (1).png-a6c0fb5f7d23f5f94861b1dfdbdfeb16.ctex"]
 
 [params]
 

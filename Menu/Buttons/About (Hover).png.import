@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://280y0ko1bskr"
-path="res://.godot/imported/AboutHover.png-5c1fb7b3a6315dba390712baed6bb99a.ctex"
+uid="uid://c3ifhrlrqegls"
+path="res://.godot/imported/About (Hover).png-f6e7e33f8cb35bd6a594684d321cc879.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Menu/Buttons/AboutHover.png"
-dest_files=["res://.godot/imported/AboutHover.png-5c1fb7b3a6315dba390712baed6bb99a.ctex"]
+source_file="res://Menu/Buttons/About (Hover).png"
+dest_files=["res://.godot/imported/About (Hover).png-f6e7e33f8cb35bd6a594684d321cc879.ctex"]
 
 [params]
 

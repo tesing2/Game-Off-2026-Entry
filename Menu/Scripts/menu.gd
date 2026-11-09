@@ -1,7 +1,7 @@
 extends Control
 
 @export var game_scene_desktop := "res://MainGame/Desktop/Desktop.tscn"
-@export var game_scene_path_settings := "res://Menu/Settings.tscn"
+@export var game_scene_path_settings := "res://Menu/SettingsMenu.tscn"
 @export var game_scene_path_about := "res://Menu/about.tscn"
 @onready var clicker: AudioStreamPlayer2D = $Clicker
 

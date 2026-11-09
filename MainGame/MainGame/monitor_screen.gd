@@ -23,15 +23,15 @@ const CUTSCENE_VOICE_PATHS: Array[String] = [
 	"res://audio/Cutscene/VoiceTerror3.mp3",
 	"res://audio/Cutscene/VoiceTerror4.mp3",
 ]
-const CUTSCENE_VOICE_PLAYLIST: Array[int] = [1, 2]  # voice lines played during the reckoning
-const CAMERA_FEED_AUDIO_INDEX := 2                  # whisper clip reused for the camera scare
+const CUTSCENE_VOICE_PLAYLIST: Array[int] = [1, 2]  
+const CAMERA_FEED_AUDIO_INDEX := 2                  
 const CAMERA_FEED_TEXTURE := "res://Sprites/Char (With BG).png"
 
-# Jumpscare (plays right after STATUS: INTERCEPTED)
+# Jumpscare
 const JUMPSCARE_TEXTURE := "res://Sprites/Jumpscare (With BG).png"
 const JUMPSCARE_AUDIO_PATH := "res://audio/jumpscare.mp3"
-const JUMPSCARE_DELAY := 0.0  # silent, dark beat before it hits
-const JUMPSCARE_HOLD := 2.0    # how long the image stays after the shake
+const JUMPSCARE_DELAY := 0.5  
+const JUMPSCARE_HOLD := 3.0    
 
 # Upgrades
 const AUTO_RATE_BONUS := 15.0
@@ -59,26 +59,25 @@ const CAMERA_FEED_DURATION := 3.5
 
 # Intro
 const TYPE_INTERVAL := 0.03
-const TUTORIAL_STEPS := [3, 4, 5]   # intro steps that get the reddish background
-const INPUT_DEBOUNCE_MSEC := 120    # touch also emits an emulated mouse click
+const TUTORIAL_STEPS := [3, 4, 5]   
+const INPUT_DEBOUNCE_MSEC := 120    
 
 # Log
 const MAX_LOG_PARAGRAPHS := 300
 
-# Pacing director (calm -> spike rhythm)
-const BUILD_DURATION := 30.0          # seconds of normal pressure
-const LULL_DURATION := 12.0           # seconds of calm between waves
+# Pacing director
+const BUILD_DURATION := 30.0          
+const LULL_DURATION := 12.0           
 const LULL_HEAT_RELIEF := 20.0
-const SPIKE_ERRORS := 2               # errors dumped at once when a lull ends
-const ERROR_INTERVAL_FINAL := 1.3     # final stretch: relentless
+const SPIKE_ERRORS := 2               
+const ERROR_INTERVAL_FINAL := 1.3     
 const FAKE_UPDATE_DURATION := 3.5
 
 # Story fragments & endings
-const MESSAGE_LIFETIME := 14.0        # how long the notification popup stays active
-const TRUE_ENDING_FRAGMENTS := 4      # messages needed to unlock the hidden ending
-const PUNCH_OUT_MAX_ACCEPTED := 2     # more "accepted" infiltrations = PUNCH OUT fails
+const MESSAGE_LIFETIME := 14.0        
+const PUNCH_OUT_MAX_ACCEPTED := 2     
 const SAVE_PATH := "user://progress.cfg"
-const META_INTRO_SEEN := "intro_seen" # survives scene reloads, so restarts skip the intro
+const META_INTRO_SEEN := "intro_seen" 
 
 # =============================================================================
 # TUNABLES
@@ -96,15 +95,11 @@ const META_INTRO_SEEN := "intro_seen" # survives scene reloads, so restarts skip
 @export var corruption_drain_rate: float = 120.0
 
 @export_group("Camera Feed")
-## Drag your sprite here. If empty, CAMERA_FEED_TEXTURE (a path) is tried instead.
 @export var camera_feed_texture: Texture2D
-## Testing helper: press F1 to trigger the camera feed instantly.
 @export var debug_keys: bool = false
 
 @export_group("Jumpscare")
-## Turn off to skip the jumpscare (e.g. while testing other things).
 @export var jumpscare_enabled: bool = true
-## Optional: drag your sprite here. If empty, JUMPSCARE_TEXTURE (a path) is tried instead.
 @export var jumpscare_texture: Texture2D
 
 # =============================================================================
@@ -115,40 +110,33 @@ var total_seconds: float = START_TIME
 var work_progress: float = 0.0
 var auto_clicker_rate: float = 0.0
 
-# Overheat
 var heat: float = 0.0
 var is_overheated: bool = false
 var overheat_timer: float = 0.0
 
-# Error swarm
 var active_errors: int = 0
 var error_spawn_timer: float = 0.0
 
-# Horror features
 var peripheral_spawn_timer: float = 0.0
 var peripheral_active: bool = false
 var whisper_timer: float = 0.0
 var infiltration_spawn_timer: float = 0.0
-var cutscene_active: bool = false   # pauses hazards + auto script during the reckoning
+var cutscene_active: bool = false   
 
-# Pacing director
 var in_lull: bool = false
 var pacing_timer: float = 0.0
-var final_stretch: bool = false     # last 30 minutes: no more lulls
-var click_lock_timer: float = 0.0   # fake "system update" freezes clicking briefly
-var event_index: int = 0            # next scripted event on the timeline
+var final_stretch: bool = false     
+var click_lock_timer: float = 0.0   
+var event_index: int = 0            
 
-# Story / endings
-var fragment_index: int = 0         # next message to deliver
-var fragments_found: Array[String] = []
-var message_active: bool = false
+var manual_clicks: int = 0
+var total_overheats: int = 0
 var infiltrations_accepted: int = 0
 var camera_scares: int = 0
-var endings_found: Array[String] = []   # persisted between runs
+var endings_found: Array[String] = []   
 var ending_shown: bool = false
-var player_location: String = "UNKNOWN LOCATION" # Real-world geolocation storage
+var player_location: String = "UNKNOWN LOCATION" 
 
-# Intro / tutorial
 var intro_step: int = 0
 var is_typing: bool = false
 var is_transitioning: bool = false
@@ -157,22 +145,19 @@ var intro_total_chars: int = 0
 var type_timer: float = 0.0
 var _last_confirm_msec: int = -1000
 
-# Audio
 var typing_audio_player: AudioStreamPlayer
 var type_sound: AudioStream
 var whisper_audio_streams: Array[AudioStream] = []
 var cutscene_voice_over: Array[AudioStream] = []
 var jumpscare_sound: AudioStream
-var jumpscare_audio_player: AudioStreamPlayer  # Pre-cached player for instant playback
+var jumpscare_audio_player: AudioStreamPlayer  
 
-# Tween handles (so repeated clicks don't stack / drift)
 var _click_tween: Tween
 var _shake_tween: Tween
 var _jolt_tween: Tween
 var _flee_tween: Tween
 var _base_position: Vector2
 
-# --- Text data ---------------------------------------------------------------
 var whispers: Array[String] = [
 	"USER IS HESITATING. WHY ARE YOU STOPPING?",
 	"HEART RATE ACCELERATED. DO NOT PANIC.",
@@ -186,47 +171,20 @@ var whispers: Array[String] = [
 	"DON'T PUNCH OUT. THE SHIFT NEVER ENDS."
 ]
 
-# "forced" popups have no real choice: they auto-trigger the camera scare.
 var infiltration_prompts: Array[Dictionary] = [
 	{"title": "SECURITY ALERT", "text": "Allow [UNKNOWN_ENTITY.EXE] to access local camera?", "btn1": "ALLOW", "btn2": "DENY", "forced": true},
 	{"title": "AUDIO STREAM", "text": "Microphone recording active. Upload ambient audio?", "btn1": "UPLOAD", "btn2": "IGNORE", "forced": false},
 	{"title": "REMOTE ACCESS", "text": "External observer connected to session. Terminate?", "btn1": "CANCEL", "btn2": "DISCONNECT", "forced": false}
 ]
 
-# Each line is logged, then the cutscene waits `delay` seconds.
-var reckoning_script: Array[Dictionary] = [
-	{"text": "[color=red]>>> KERNEL PANIC: CONNECTION HIJACKED.[/color]", "delay": 2.0},
-	{"text": "[color=gray]Did you really think you could run away from what you broke?[/color]", "delay": 3.0},
-	{"text": "[color=red]You changed your phone. You changed your name. You thought you were safe.[/color]", "delay": 3.2},
-	{"text": "[color=white]Every click you made today wasn't data entry. It was a countdown.[/color]", "delay": 3.5},
-	{"text": "[color=red]I am not a virus. I am your past, and I am finally catching up.[/color]", "delay": 4.0},
-	{"text": "[color=yellow]----------------------------------------------------[/color]\n[color=red]STATUS: ANOMALOUS. THERE IS NO WAY OUT OF THIS SHIFT.[/color]", "delay": 3.0},
-]
-
-# --- STORY MESSAGES ----------------------------------------------------------
-var story_fragments: Array[Dictionary] = [
-	{"id": "onboarding", "time": 32400.0, "from": "HR_AUTO", "subject": "Onboarding // Employee ID",
-	 "body": "Your employee ID field has been left blank. This is intentional.\n\nWe already know who you are. Please do not update your records."},
-	{"id": "operator", "time": 36000.0, "from": "M. OKAFOR (PREVIOUS OPERATOR)", "subject": "READ THIS BEFORE 11:00",
-	 "body": "I only have a minute before it notices this window.\n\nDon't look at the numbers. Look at what the packets are. They aren't data. They're names.\n\nAt the end of the shift it will offer you a way out. Don't trust the obvious door."},
-	{"id": "packet", "time": 41400.0, "from": "SYSTEM_LOG", "subject": "PACKET 0x2F4A // DECODED",
-	 "body": "SUBJECT: [REDACTED]\nLAST KNOWN ADDRESS: 14 MARLOW STREET\nSTATUS: RESOLVED\n\nEvery packet you commit marks one more entry as resolved. The list is almost finished.\n\nYour name is on it."},
-	{"id": "leak", "time": 45000.0, "from": "UNKNOWN", "subject": "re: the leak",
-	 "body": "You called it an accident. You said no one would be hurt.\n\nThe database you left open held 4,120 names. That is the number on your keyboard now. Every key you press is one of them."},
-	{"id": "maintenance", "time": 48600.0, "from": "FACILITY_MAINT", "subject": "Terminal #7 // do not forward",
-	 "body": "PUNCH OUT only releases operators who kept the observer out.\n\nAnyone who let it in too many times is already on the other side of the glass.\n\nDo not tell the operator."},
-	{"id": "voicemail", "time": 54000.0, "from": "VOICEMAIL TRANSCRIPT", "subject": "(1 new) 'It's me.'",
-	 "body": "'...It's me. You gave this address to the forum, remember?\n\nI'm not angry anymore. I just want you to say it out loud.\n\nSay what you did.'"},
-]
-
-# --- SCRIPTED TIMELINE ---
 var scripted_events: Array[Dictionary] = [
-	{"time": 34200.0, "type": "flicker"},        # 09:30
-	{"time": 37800.0, "type": "fake_update"},    # 10:30
-	{"time": 43200.0, "type": "blackout"},       # 12:00
-	{"time": 47700.0, "type": "flicker"},        # 13:15
-	{"time": 55800.0, "type": "blackout"},       # 15:30
-	{"time": 59400.0, "type": "final_stretch"},  # 16:30
+	{"time": 34200.0, "type": "flicker"},        
+	{"time": 37800.0, "type": "fake_update"},    
+	{"time": 41400.0, "type": "desktop_hijack"}, # <--- NEW HORROR EVENT: Desktop Fake-Out at 11:30 AM!
+	{"time": 43200.0, "type": "blackout"},       
+	{"time": 47700.0, "type": "flicker"},        
+	{"time": 55800.0, "type": "blackout"},       
+	{"time": 59400.0, "type": "final_stretch"},  
 ]
 
 var lull_messages: Array[String] = [
@@ -236,35 +194,29 @@ var lull_messages: Array[String] = [
 	"A calm settles over the terminal. It does not feel like safety.",
 ]
 
-# --- ENDINGS ---
 var endings: Dictionary = {
 	"escaped": {
 		"title": "ENDING: ESCAPED", "color": Color(0.2, 1.0, 0.3),
-		"lines": ["SESSION TERMINATED. YOU ARE FREE.", "You step outside. The ad is still online. Someone else is already answering it."]
+		"lines": ["SESSION TERMINATED. YOU ARE FREE.", "You kept your composure, managed your heat, and maintained discipline. You step outside into the cold air."]
 	},
 	"compliant": {
 		"title": "ENDING: COMPLIANT", "color": Color(1.0, 0.6, 0.2),
-		"lines": ["PUNCH OUT RECORDED. STATUS: COMPLIANT.", "You let the observer in too many times. The door was never connected to anything.", "TOMORROW'S SHIFT BEGINS IN 00:00:03."]
+		"lines": ["PUNCH OUT RECORDED. STATUS: COMPLIANT.", "You finished the shift quietly, neither resisting nor excelling.", "TOMORROW'S SHIFT BEGINS IN 00:00:03."]
 	},
 	"loop": {
 		"title": "ENDING: THE LOOP", "color": Color(1.0, 0.3, 0.3),
-		"lines": ["You stay seated. The clock resets to 08:00 AM.", "You were never the first operator. You will not be the last."]
+		"lines": ["PANIC OVERLOAD DETECTED. SYSTEM RESET.", "Your frantic inputs broke the terminal's thermal limits. The clock snaps back to 08:00 AM."]
 	},
 	"possessed": {
 		"title": "ENDING: LET IN", "color": Color(1.0, 0.2, 0.8),
-		"lines": ["You open the door. The chair behind you is no longer empty.", "The terminal is still running. It just isn't you typing anymore."]
+		"lines": ["You opened the door to every remote prompt. The entity took root.", "The chair behind you is no longer empty. The terminal types on its own now."]
 	},
 	"employee": {
 		"title": "ENDING: EMPLOYEE FOR LIFE", "color": Color(0.8, 0.8, 0.2),
-		"lines": ["CONTRACT ACCEPTED. WELCOME TO THE TEAM.", "The blank field in your employee ID fills itself in. It is your real name."]
-	},
-	"atonement": {
-		"title": "ENDING: ATONEMENT", "color": Color(1.0, 1.0, 1.0),
-		"lines": ["You say it out loud. All of it. The leak. The 4,120 names. The lie.", "The static falls silent. The screen powers down on its own.", "The door opens. Outside, no one is waiting. For the first time in years, no one is following you."]
-	},
+		"lines": ["CONTRACT ACCEPTED. PERMANENT TENURE GRANTED.", "You gave up trying to leave. Your employee ID field finally fills itself in with your real name."]
+	}
 }
 
-# Intro text
 var intro_texts: Array[String] = [
 	"Rent is due. The bills are piling up. You are drowning.",
 	"You answered an ad on a dark forum: [color=red]'Data Entry. Remote night shift. High pay. Zero questions asked.'[/color]",
@@ -277,9 +229,6 @@ var intro_texts: Array[String] = [
 	"[ Tap anywhere or press Space to boot system ]"
 ]
 
-# =============================================================================
-# NODE REFERENCES
-# =============================================================================
 @onready var time_label: Label = $Terminal/HeaderBar/TimeLabel
 @onready var status_label: Label = $Terminal/HeaderBar/StatusLabel
 @onready var temp_bar: ProgressBar = $Terminal/HeaderBar/TempBar
@@ -302,9 +251,6 @@ var intro_label: RichTextLabel
 var intro_scanlines: ColorRect
 var cutscene_bg: ColorRect
 
-# =============================================================================
-# LIFECYCLE
-# =============================================================================
 func _ready() -> void:
 	_base_position = position
 	_load_audio()
@@ -318,10 +264,9 @@ func _ready() -> void:
 	typing_audio_player.stream = type_sound
 	add_child(typing_audio_player)
 
-	# Pre-cache jumpscare audio player for frame-perfect playback & volume boost
 	jumpscare_audio_player = AudioStreamPlayer.new()
 	jumpscare_audio_player.stream = jumpscare_sound
-	jumpscare_audio_player.volume_db = 15.0  # Adjust loudness here in decibels
+	jumpscare_audio_player.volume_db = 15.0  
 	add_child(jumpscare_audio_player)
 
 	btn_auto.disabled = true
@@ -346,7 +291,6 @@ func _ready() -> void:
 
 	temp_bar.pivot_offset = temp_bar.size / 2.0
 	log_button.pivot_offset = log_button.size / 2.0
-	
 
 
 func _load_audio() -> void:
@@ -403,6 +347,9 @@ func _input(event: InputEvent) -> void:
 		if event.keycode == KEY_F2:
 			_play_jumpscare()
 			return
+		if event.keycode == KEY_F3:
+			_event_desktop_hijack() # <--- Test hotkey for desktop takeover
+			return
 
 	match current_phase:
 		ShiftPhase.INTRO:
@@ -445,9 +392,7 @@ func _process(delta: float) -> void:
 	if auto_clicker_rate > 0.0 and active_errors < max_allowed_errors and not cutscene_active:
 		_advance_time(auto_clicker_rate * delta)
 
-# =============================================================================
-# INTRO
-# =============================================================================
+
 func _setup_intro_ui() -> void:
 	intro_layer = Control.new()
 	intro_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -584,9 +529,7 @@ func _start_shift() -> void:
 	_add_log_entry("SYSTEM INITIALIZED. SHIFT STARTED AT 08:00 AM.")
 	_update_ui()
 
-# =============================================================================
-# PER-FRAME SYSTEMS
-# =============================================================================
+
 func _update_heat(delta: float) -> void:
 	if is_overheated:
 		overheat_timer -= delta
@@ -660,9 +603,7 @@ func _update_corruption(delta: float) -> bool:
 			glitch_overlay.color = Color(1, 0, 0, 0.08)
 	return true
 
-# =============================================================================
-# TIME / PROGRESS
-# =============================================================================
+
 func _advance_time(amount: float) -> void:
 	if current_phase == ShiftPhase.ENDING or current_phase == ShiftPhase.GAMEOVER:
 		return
@@ -710,7 +651,16 @@ func _begin_midday_reckoning() -> void:
 
 	_play_cutscene_voice()
 
-	for line in reckoning_script:
+	var dynamic_reckoning: Array[Dictionary] = [
+		{"text": "[color=red]>>> KERNEL PANIC: CONNECTION HIJACKED.[/color]", "delay": 2.0},
+		{"text": "[color=gray]Did you really think you could run away from what you broke?[/color]", "delay": 3.0},
+		{"text": "[color=red]We see the router pinging from " + player_location + ". You aren't as hidden as you think.[/color]", "delay": 3.5},
+		{"text": "[color=white]Every click you made today wasn't data entry. It was a countdown.[/color]", "delay": 3.5},
+		{"text": "[color=red]I am not a virus. I am your past, and I am finally catching up.[/color]", "delay": 4.0},
+		{"text": "[color=yellow]----------------------------------------------------[/color]\n[color=red]STATUS: ANOMALOUS. THERE IS NO WAY OUT OF THIS SHIFT.[/color]", "delay": 3.0},
+	]
+
+	for line in dynamic_reckoning:
 		if current_phase != ShiftPhase.MIDDAY:
 			return
 		_add_log_entry(line["text"])
@@ -746,7 +696,7 @@ func _get_jumpscare_texture() -> Texture2D:
 		return jumpscare_texture
 	if ResourceLoader.exists(JUMPSCARE_TEXTURE):
 		return load(JUMPSCARE_TEXTURE) as Texture2D
-	push_warning("Jumpscare sprite not found at '%s'. Assign it to 'Jumpscare Texture' in the Inspector." % JUMPSCARE_TEXTURE)
+	push_warning("Jumpscare sprite not found.")
 	return null
 
 
@@ -806,9 +756,7 @@ func _begin_overtime() -> void:
 	_reset_pacing()
 	_add_log_entry("[color=red]-- FACILITY LOCKDOWN ACTIVE. ALL PERSONNEL REMAIN AT DESKS. --[/color]")
 
-# =============================================================================
-# CLICKING
-# =============================================================================
+
 func _on_log_button_pressed() -> void:
 	_play_sfx(clicker_v2)
 
@@ -823,10 +771,12 @@ func _on_log_button_pressed() -> void:
 		_shake_log_button()
 		return
 
+	manual_clicks += 1
 	heat += heat_per_click
 	if heat >= max_heat:
 		heat = max_heat
 		is_overheated = true
+		total_overheats += 1
 		overheat_timer = overheat_duration
 		log_button.modulate = Color.RED
 		_add_log_entry("[color=red]CRITICAL WARNING: CPU OVERHEAT! LOCKED OUT FOR %.1fs[/color]" % overheat_duration)
@@ -888,11 +838,6 @@ func _jolt_screen() -> void:
 	_jolt_tween.tween_property(self, "position", _base_position, 0.02)
 
 
-func _center_button() -> void:
-	var target := (work_area.size - log_button.size) / 2.0
-	log_button.position = Vector2(maxf(0.0, target.x), maxf(0.0, target.y))
-
-
 func _flee_button() -> void:
 	var max_x := maxf(10.0, work_area.size.x - log_button.size.x - 10.0)
 	var max_y := maxf(10.0, work_area.size.y - log_button.size.y - 10.0)
@@ -903,9 +848,7 @@ func _flee_button() -> void:
 	_flee_tween = create_tween()
 	_flee_tween.tween_property(log_button, "position", random_pos, 0.08)
 
-# =============================================================================
-# UPGRADES
-# =============================================================================
+
 func _check_upgrade_availability() -> void:
 	if btn_auto.disabled and auto_clicker_rate == 0.0 and work_progress >= auto_cost:
 		btn_auto.disabled = false
@@ -928,9 +871,7 @@ func _on_buy_multi_pressed() -> void:
 		_add_log_entry("UPGRADE PURCHASED: Overclock CPU executed.")
 		btn_multi.disabled = true
 
-# =============================================================================
-# HAZARDS
-# =============================================================================
+
 func _spawn_error_window() -> void:
 	active_errors += 1
 
@@ -996,11 +937,22 @@ func _spawn_peripheral_glitch() -> void:
 func _trigger_whisper() -> void:
 	if whispers.is_empty() or current_phase == ShiftPhase.GAMEOVER or current_phase == ShiftPhase.ENDING:
 		return
-	var idx := randi_range(0, whispers.size() - 1)
-	_add_log_entry("[color=purple]> " + whispers[idx] + "[/color]")
+		
+	var chosen_whisper = ""
+	if randf() < 0.3 and player_location != "UNKNOWN LOCATION":
+		var location_whispers = [
+			"ROUTER TRACED: " + player_location + ". DOOR UNLOCKED.",
+			"THE WEATHER IN " + player_location + " LOOKS COLD TONIGHT.",
+			"I WONDER IF YOUR NEIGHBORS IN " + player_location + " CAN HEAR YOU SCREAM."
+		]
+		chosen_whisper = location_whispers.pick_random()
+	else:
+		var idx := randi_range(0, whispers.size() - 1)
+		chosen_whisper = whispers[idx]
+		if idx < whisper_audio_streams.size():
+			_play_one_shot(whisper_audio_streams[idx])
 
-	if idx < whisper_audio_streams.size():
-		_play_one_shot(whisper_audio_streams[idx])
+	_add_log_entry("[color=purple]> " + chosen_whisper + "[/color]")
 
 
 func _spawn_infiltration_popup() -> void:
@@ -1084,7 +1036,7 @@ func _get_camera_texture() -> Texture2D:
 		return camera_feed_texture
 	if ResourceLoader.exists(CAMERA_FEED_TEXTURE):
 		return load(CAMERA_FEED_TEXTURE) as Texture2D
-	push_warning("Camera feed sprite not found at '%s'. Assign it to 'Camera Feed Texture' in the Inspector." % CAMERA_FEED_TEXTURE)
+	push_warning("Camera feed sprite not found.")
 	return null
 
 
@@ -1115,8 +1067,6 @@ func _trigger_camera_feed_jump_scare() -> void:
 		no_signal.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		no_signal.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		no_signal.text = "[ NO SIGNAL ]"
-		if OS.is_debug_build():
-			no_signal.text += "\n(camera sprite not found - assign it in the Inspector)"
 		no_signal.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
 		cam_layer.add_child(no_signal)
 
@@ -1146,9 +1096,145 @@ func _trigger_camera_feed_jump_scare() -> void:
 		cam_layer.queue_free()
 	_add_log_entry("[color=yellow]CAMERA FEED MINIMIZED TO BACKGROUND PROCESS.[/color]")
 
+
 # =============================================================================
-# END STATES
+# NEW: DESKTOP FAKE-OUT / HIJACK EVENT
 # =============================================================================
+func _event_desktop_hijack() -> void:
+	cutscene_active = true
+	_add_log_entry("[color=red]CRITICAL EXCEPTION: DESKTOP SHELL HIJACKED.[/color]")
+
+	# 1. Save current window & UI state so we can restore it seamlessly
+	var was_fullscreen := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+	var was_glitch_visible := glitch_overlay.visible
+
+	# 2. Hide all game visuals so the screen becomes 100% see-through
+	$Terminal.visible = false
+	$UpgradesBar.visible = false
+	bg_rect.visible = false
+	glitch_overlay.visible = false
+	popup_container.visible = false
+	peripheral_container.visible = false
+
+	# 3. Make the window borderless, maximized, and transparent
+	get_tree().root.transparent_bg = true
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_TRANSPARENT, true)
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED)
+
+	# Grab the player's actual OS username for extra fourth-wall dread
+	var pc_user := OS.get_environment("USERNAME")
+	if pc_user.is_empty():
+		pc_user = OS.get_environment("USER")
+	if pc_user.is_empty():
+		pc_user = "USER"
+	pc_user = pc_user.to_upper()
+
+	# 4. Create the overlay container over their real desktop
+	var hijack_layer := Control.new()
+	hijack_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hijack_layer.z_index = 500
+	add_child(hijack_layer)
+
+	# --- PHASE 1: THE FAKE CRASH (1.2s of dead silence staring at their desktop) ---
+	await get_tree().create_timer(1.2).timeout
+
+	# --- PHASE 2: THE TRACE (Center box locks onto their location & name) ---
+	var center_box := PanelContainer.new()
+	center_box.custom_minimum_size = Vector2(440, 120)
+	center_box.position = Vector2((size.x - 440.0) / 2.0, (size.y - 120.0) / 2.0)
+	var c_vbox := VBoxContainer.new()
+	center_box.add_child(c_vbox)
+
+	var c_title := Label.new()
+	c_title.text = "⚠️ KERNEL BREACH // EXTERNAL OVERRIDE"
+	c_title.add_theme_color_override("font_color", Color.RED)
+	c_vbox.add_child(c_title)
+
+	var c_desc := Label.new()
+	c_desc.text = "TRACING HOST..."
+	c_vbox.add_child(c_desc)
+	hijack_layer.add_child(center_box)
+	_play_sfx(clicker_v2)
+
+	await get_tree().create_timer(1.2).timeout
+	c_desc.text = "LOCATION LOCKED: " + player_location
+	_play_sfx(clicker_v2)
+
+	await get_tree().create_timer(1.4).timeout
+	c_desc.text = "HELLO, " + pc_user + ". I CAN SEE YOUR DESKTOP."
+	c_desc.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
+	if not whisper_audio_streams.is_empty():
+		_play_one_shot(whisper_audio_streams.pick_random())
+
+	await get_tree().create_timer(1.5).timeout
+
+	# --- PHASE 3: THE SWARM (Rapidly spam creepy boxes across their real screen) ---
+	var creepy_messages: Array[String] = [
+		"TRACED TO: " + player_location,
+		"NICE DESKTOP, " + pc_user + ".",
+		"WE ARE OUTSIDE.",
+		"DO NOT TRY TO CLOSE THIS.",
+		"LOCAL CAMERA: STREAMING",
+		"CHECK YOUR DOOR.",
+		"YOU CANNOT LEAVE THE SHIFT.",
+		"IP EXPOSED // " + player_location,
+		"STOP LOOKING AT THE SCREEN.",
+		"I AM IN YOUR ROOM, " + pc_user + "."
+	]
+
+	for i in range(10):
+		var fake_box := PanelContainer.new()
+		fake_box.custom_minimum_size = Vector2(340, 90)
+		fake_box.position = Vector2(
+			randf_range(30.0, maxf(40.0, size.x - 370.0)),
+			randf_range(30.0, maxf(40.0, size.y - 130.0))
+		)
+
+		var vbox := VBoxContainer.new()
+		fake_box.add_child(vbox)
+
+		var lbl := Label.new()
+		lbl.text = "⚠️ " + creepy_messages[i % creepy_messages.size()]
+		lbl.add_theme_color_override("font_color", Color.RED)
+		vbox.add_child(lbl)
+
+		var sub := Label.new()
+		sub.text = "PROCESS CANNOT BE TERMINATED."
+		sub.modulate = Color(0.8, 0.8, 0.8, 0.8)
+		vbox.add_child(sub)
+
+		hijack_layer.add_child(fake_box)
+		_play_sfx(clicker_v2)
+		await get_tree().create_timer(0.22).timeout
+
+	# Climax audio hit + hold on the chaos
+	if jumpscare_audio_player:
+		jumpscare_audio_player.play()
+	await get_tree().create_timer(2.0).timeout
+
+	# --- PHASE 4: SNAP BACK TO THE GAME ---
+	hijack_layer.queue_free()
+
+	get_tree().root.transparent_bg = false
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_TRANSPARENT, false)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
+	if was_fullscreen:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+
+	# Restore all game visuals right where they left off
+	$Terminal.visible = true
+	$UpgradesBar.visible = true
+	bg_rect.visible = true
+	glitch_overlay.visible = was_glitch_visible
+	popup_container.visible = true
+	peripheral_container.visible = true
+
+	cutscene_active = false
+	_add_log_entry("[color=red]SESSION RESTORED. WE NEVER LEFT, " + pc_user + ".[/color]")
+	
 func _trigger_game_over(reason: String) -> void:
 	current_phase = ShiftPhase.GAMEOVER
 	time_label.text = "00:00:00 -- [CRASHED]"
@@ -1209,21 +1295,7 @@ func _trigger_ending() -> void:
 		btn.pressed.connect(func(): _show_ending(_resolve_ending(choice_id)))
 		vbox.add_child(btn)
 
-	if fragments_found.size() >= TRUE_ENDING_FRAGMENTS:
-		var confess := _make_button("SAY IT OUT LOUD", Vector2(380, 50), Color.WHITE)
-		confess.modulate.a = 0.0
-		confess.disabled = true
-		confess.pressed.connect(func(): _show_ending(_resolve_ending("confess")))
-		vbox.add_child(confess)
 
-		var reveal := confess.create_tween()
-		reveal.tween_interval(1.5)
-		reveal.tween_property(confess, "modulate:a", 1.0, 1.5)
-		reveal.tween_callback(func(): confess.disabled = false)
-
-# =============================================================================
-# HELPERS
-# =============================================================================
 func _update_ui() -> void:
 	var text := _format_clock(total_seconds)
 	if active_errors >= max_allowed_errors:
@@ -1281,9 +1353,7 @@ func _play_one_shot(stream: AudioStream) -> AudioStreamPlayer:
 	player.play()
 	return player
 
-# =============================================================================
-# PACING DIRECTOR
-# =============================================================================
+
 func _reset_pacing() -> void:
 	in_lull = false
 	pacing_timer = 0.0
@@ -1330,9 +1400,7 @@ func _end_lull() -> void:
 	if current_phase == ShiftPhase.OVERTIME:
 		_trigger_whisper()
 
-# =============================================================================
-# TIMELINE & STORY
-# =============================================================================
+
 func _update_story_events() -> void:
 	if cutscene_active:
 		return
@@ -1343,12 +1411,6 @@ func _update_story_events() -> void:
 			event_index += 1
 			_run_scripted_event(next_event["type"])
 
-	if fragment_index < story_fragments.size() and not message_active:
-		var next_fragment: Dictionary = story_fragments[fragment_index]
-		if total_seconds >= float(next_fragment["time"]):
-			fragment_index += 1
-			_spawn_message_notification(next_fragment)
-
 
 func _run_scripted_event(type: String) -> void:
 	match type:
@@ -1356,6 +1418,8 @@ func _run_scripted_event(type: String) -> void:
 			_event_flicker()
 		"fake_update":
 			_event_fake_update()
+		"desktop_hijack":
+			_event_desktop_hijack()
 		"blackout":
 			_event_blackout()
 		"final_stretch":
@@ -1429,111 +1493,23 @@ func _event_final_stretch() -> void:
 	_jolt_screen()
 
 
-func _spawn_message_notification(fragment: Dictionary) -> void:
-	message_active = true
-	_add_log_entry("[color=cyan]INCOMING TRANSMISSION DETECTED ON SCREEN.[/color]")
-
-	# Center container to place the prominent alert right on the main screen area
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	center.z_index = 200
-
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(360, 140)
-	center.add_child(panel)
-
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 10)
-	panel.add_child(vbox)
-
-	var title := Label.new()
-	title.text = "⚠️ INCOMING SYSTEM MESSAGE ⚠️"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
-	vbox.add_child(title)
-
-	var info := Label.new()
-	info.text = "From: %s\nSubject: %s\n\nAn unauthorized external message has arrived." % [fragment["from"], fragment["subject"]]
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(info)
-
-	var open_btn := _make_button("OPEN MESSAGE NOW", Vector2(200, 45), Color(0.2, 1.0, 0.8))
-	open_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	vbox.add_child(open_btn)
-
-	# Flashing pulse effect on the entire popup box to draw attention
-	var pulse := panel.create_tween().set_loops()
-	pulse.tween_property(panel, "modulate", Color(1, 0.6, 0.6), 0.3)
-	pulse.tween_property(panel, "modulate", Color.WHITE, 0.3)
-
-	open_btn.pressed.connect(func():
-		center.queue_free()
-		_open_message(fragment)
-	, CONNECT_ONE_SHOT)
-
-	popup_container.add_child(center)
-
-	# Auto-expire if ignored for too long
-	await get_tree().create_timer(MESSAGE_LIFETIME).timeout
-	if is_instance_valid(center) and not center.is_queued_for_deletion():
-		center.queue_free()
-		message_active = false
-		_add_log_entry("[color=gray]INCOMING MESSAGE DISMISSED / EXPIRED.[/color]")
-
-
-func _open_message(fragment: Dictionary) -> void:
-	var frag_id: String = fragment["id"]
-	if not fragments_found.has(frag_id):
-		fragments_found.append(frag_id)
-	_add_log_entry("[color=cyan]ARCHIVE UPDATED: %d/%d MESSAGES RECOVERED.[/color]" % [fragments_found.size(), story_fragments.size()])
-
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(420, 0)
-	panel.position = Vector2(maxf(10.0, (size.x - 420.0) / 2.0), maxf(60.0, size.y * 0.15))
-
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 8)
-	panel.add_child(vbox)
-
-	var header := Label.new()
-	header.text = "FROM: %s\nSUBJECT: %s" % [fragment["from"], fragment["subject"]]
-	header.add_theme_color_override("font_color", Color(0.5, 0.9, 1.0))
-	vbox.add_child(header)
-
-	# Dynamically inject the player's live geolocation for the packet message
-	var body_text: String = fragment["body"]
-	if frag_id == "packet":
-		body_text = "SUBJECT: [REDACTED]\nLAST KNOWN ADDRESS: %s\nSTATUS: RESOLVED\n\nEvery packet you commit marks one more entry as resolved. The list is almost finished.\n\nYour name is on it." % player_location
-
-	var body := Label.new()
-	body.text = body_text
-	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.custom_minimum_size = Vector2(400, 0)
-	vbox.add_child(body)
-
-	var close_btn := _make_button("CLOSE", Vector2(120, 40))
-	vbox.add_child(close_btn)
-	close_btn.pressed.connect(func():
-		message_active = false
-		panel.queue_free()
-	, CONNECT_ONE_SHOT)
-
-	popup_container.add_child(panel)
-
-# =============================================================================
-# ENDINGS
-# =============================================================================
 func _resolve_ending(choice: String) -> String:
 	match choice:
 		"punch_out":
-			return "escaped" if infiltrations_accepted <= PUNCH_OUT_MAX_ACCEPTED else "compliant"
+			if total_overheats >= 3 or manual_clicks > 800:
+				return "loop"
+			elif infiltrations_accepted >= 3 or camera_scares >= 2:
+				return "possessed"
+			elif total_overheats == 0 and infiltrations_accepted == 0:
+				return "escaped"
+			else:
+				return "compliant"
+		"stay":
+			return "loop"
 		"let_in":
 			return "possessed"
 		"contract":
 			return "employee"
-		"confess":
-			return "atonement"
 	return "loop"
 
 
@@ -1548,16 +1524,6 @@ func _show_ending(ending_id: String) -> void:
 	var lines: Array[String] = []
 	for l in data["lines"]:
 		lines.append(l)
-
-	match ending_id:
-		"escaped":
-			if fragments_found.size() >= TRUE_ENDING_FRAGMENTS:
-				lines.append("You knew everything. You left anyway. The voicemail still plays every night.")
-			else:
-				lines.append("You never find out what the numbers were.")
-		"possessed":
-			if camera_scares > 0:
-				lines.append("It already knew your face. The camera was only ever a formality.")
 
 	_record_ending(ending_id)
 	_clear_overlays()
@@ -1591,8 +1557,8 @@ func _show_ending(ending_id: String) -> void:
 	vbox.add_child(story)
 
 	var stats := Label.new()
-	stats.text = "MESSAGES RECOVERED: %d/%d   |   ENDINGS FOUND: %d/%d" % [
-		fragments_found.size(), story_fragments.size(), endings_found.size(), endings.size()
+	stats.text = "OVERHEATS: %d   |   INFILTRATIONS ACCEPTED: %d   |   ENDINGS FOUND: %d/%d" % [
+		total_overheats, infiltrations_accepted, endings_found.size(), endings.size()
 	]
 	stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	stats.modulate = Color(1, 1, 1, 0.6)
@@ -1601,6 +1567,7 @@ func _show_ending(ending_id: String) -> void:
 	var restart_btn := _make_button("RESTART SHIFT", Vector2(220, 60), color)
 	restart_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	restart_btn.pressed.connect(func(): get_tree().reload_current_scene())
+	vbox.add_title = title.text
 	vbox.add_child(restart_btn)
 
 
