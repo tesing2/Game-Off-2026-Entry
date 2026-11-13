@@ -122,7 +122,7 @@ size_flags_vertical = 6
 
 [node name="UpgradeAutoClicker" type="Button" parent="UpgradesBar" unique_id=159303380]
 layout_mode = 2
-text = "AutoScript (Cost: 50s)"
+text = "Liquid Cooler (Cost: 50s)"
 
 [node name="UpgradeMultiplier" type="Button" parent="UpgradesBar" unique_id=171407170]
 layout_mode = 2

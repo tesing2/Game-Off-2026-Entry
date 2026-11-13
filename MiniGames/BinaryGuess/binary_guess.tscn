@@ -1,0 +1,149 @@
+[gd_scene format=3 uid="uid://cgomrghaus5w3"]
+
+[ext_resource type="Script" uid="uid://rc0t1ge847yk" path="res://MiniGames/BinaryGuess/BinaryGuess.gd" id="1_s2w7s"]
+[ext_resource type="Texture2D" uid="uid://cddq4kjofkv4k" path="res://MiniGames/BinaryGuess/Sprites/Minigame_Background.png" id="2_2dhoy"]
+[ext_resource type="Texture2D" uid="uid://t6miswpobce" path="res://MiniGames/BinaryGuess/Sprites/Notice_Clickable.png" id="3_4lhqv"]
+[ext_resource type="Script" uid="uid://bgsx4m8yhc2ko" path="res://MiniGames/BinaryGuess/notice.gd" id="4_d5srr"]
+[ext_resource type="FontFile" uid="uid://ctmn3egl2abie" path="res://Fonts/Bloodstreak - Demo.otf" id="5_h62kf"]
+[ext_resource type="Texture2D" uid="uid://dlksi18tcmkwp" path="res://MiniGames/BinaryGuess/Sprites/Binary_Unclick.png" id="5_umd3u"]
+[ext_resource type="Texture2D" uid="uid://bn81iqobo8ghw" path="res://MiniGames/BinaryGuess/Sprites/Binary_Click.png" id="6_vxpal"]
+
+[node name="Binary Guess" type="Control" unique_id=163458895]
+layout_mode = 3
+anchor_right = 0.44400004
+anchor_bottom = 0.19800001
+offset_right = 772.51196
+offset_bottom = 597.696
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s2w7s")
+
+[node name="Background" type="TextureRect" parent="." unique_id=2000612096]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_2dhoy")
+expand_mode = 1
+
+[node name="Notice" type="TextureRect" parent="." unique_id=862506721]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.020249221
+anchor_top = 0.02892562
+anchor_right = 0.2686916
+anchor_bottom = 0.2768595
+offset_bottom = 1.5258789e-05
+texture = ExtResource("3_4lhqv")
+script = ExtResource("4_d5srr")
+metadata/_edit_use_anchors_ = true
+
+[node name="Hitbox" type="Button" parent="Notice" unique_id=1793825493]
+layout_mode = 0
+anchor_left = 0.6896552
+anchor_top = -0.016666668
+anchor_right = 1.0031348
+anchor_bottom = 0.16111112
+offset_right = -3.0517578e-05
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="Goal" type="Label" parent="." unique_id=60657015]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.48477364
+anchor_top = 0.14994814
+anchor_right = 0.9294777
+anchor_bottom = 0.33637014
+theme_override_fonts/font = ExtResource("5_h62kf")
+theme_override_font_sizes/font_size = 60
+text = "120"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Indicator" type="Label" parent="." unique_id=947335645]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.26246107
+anchor_top = 0.38567492
+anchor_right = 0.7071651
+anchor_bottom = 0.5289256
+offset_bottom = 3.0517578e-05
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="." unique_id=40424546]
+layout_mode = 0
+offset_left = 414.0
+offset_top = 127.0
+offset_right = 1015.0
+offset_bottom = 219.0
+theme_override_fonts/font = ExtResource("5_h62kf")
+theme_override_font_sizes/font_size = 32
+text = "Toggle buttons to sum up to the target: "
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=908757727]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.04088785
+anchor_top = 0.57300276
+anchor_right = 0.95911217
+anchor_bottom = 0.8002755
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Bin1" type="TextureButton" parent="HBoxContainer" unique_id=387095437]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("5_umd3u")
+texture_pressed = ExtResource("6_vxpal")
+
+[node name="Bin2" type="TextureButton" parent="HBoxContainer" unique_id=152756029]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("5_umd3u")
+texture_pressed = ExtResource("6_vxpal")
+
+[node name="Bin3" type="TextureButton" parent="HBoxContainer" unique_id=1491186686]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("5_umd3u")
+texture_pressed = ExtResource("6_vxpal")
+
+[node name="Bin4" type="TextureButton" parent="HBoxContainer" unique_id=1496145398]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("5_umd3u")
+texture_pressed = ExtResource("6_vxpal")
+
+[node name="Bin5" type="TextureButton" parent="HBoxContainer" unique_id=1006780522]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("5_umd3u")
+texture_pressed = ExtResource("6_vxpal")
+
+[node name="Bin6" type="TextureButton" parent="HBoxContainer" unique_id=1521386858]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("5_umd3u")
+texture_pressed = ExtResource("6_vxpal")
+
+[node name="Bin7" type="TextureButton" parent="HBoxContainer" unique_id=1000029130]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("5_umd3u")
+texture_pressed = ExtResource("6_vxpal")
+
+[connection signal="pressed" from="Notice/Hitbox" to="Notice" method="_on_hitbox_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bin1" to="." method="_on_bin_1_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bin2" to="." method="_on_bin_2_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bin3" to="." method="_on_bin_3_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bin4" to="." method="_on_bin_4_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bin5" to="." method="_on_bin_5_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bin6" to="." method="_on_bin_6_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bin7" to="." method="_on_bin_7_pressed"]

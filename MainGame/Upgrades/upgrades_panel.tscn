@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://bb1nruyrvmffh"]
+
+[ext_resource type="Script" uid="uid://cvs275t25bnln" path="res://MainGame/Upgrades/upgrades_panel.gd.gd" id="1_7yi5c"]
+
+[node name="UpgradesPanel" type="Control" unique_id=1599788063]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7yi5c")
+
+[node name="Panel" type="Panel" parent="." unique_id=2073062929]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button_Auto" type="Button" parent="Panel" unique_id=225611700]
+layout_mode = 0
+offset_left = 581.0
+offset_top = 317.0
+offset_right = 932.0
+offset_bottom = 441.0
+
+[node name="Button_Multi" type="Button" parent="Panel" unique_id=1714243339]
+layout_mode = 0
+offset_left = 586.0
+offset_top = 467.0
+offset_right = 937.0
+offset_bottom = 591.0

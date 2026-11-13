@@ -34,12 +34,12 @@ const JUMPSCARE_DELAY := 0.5
 const JUMPSCARE_HOLD := 3.0    
 
 # Upgrades
-const AUTO_RATE_BONUS := 15.0
+const COOLING_REDUCTION := 2.5
 const MULTI_CLICK_BONUS := 180.0
 const BASE_SECONDS_PER_CLICK := 180.0
 
 # Heat
-const OVERTIME_HEAT_PER_CLICK := 30.0
+const OVERTIME_HEAT_PER_CLICK := 50.0
 const HEAT_PULSE_THRESHOLD := 80.0
 const PURGE_HEAT_RELIEF := 40.0
 const PURGE_TIME_REWARD := 300.0
@@ -84,8 +84,8 @@ const META_INTRO_SEEN := "intro_seen"
 # =============================================================================
 @export_group("Balance")
 @export var seconds_per_click: float = BASE_SECONDS_PER_CLICK
-@export var auto_cost: float = 1800.0
-@export var multi_cost: float = 5400.0
+@export var auto_cost: float = 900.0
+@export var multi_cost: float = 1800.0
 @export var heat_per_click: float = 5.0
 @export var heat_decay_rate: float = 30.0
 @export var overheat_duration: float = 2.5
@@ -93,6 +93,7 @@ const META_INTRO_SEEN := "intro_seen"
 @export var max_allowed_errors: int = 3
 @export var max_swarm_overflow: int = 8
 @export var corruption_drain_rate: float = 120.0
+@export var max_cooling_level: float = 1.0
 
 @export_group("Camera Feed")
 @export var camera_feed_texture: Texture2D
@@ -108,7 +109,7 @@ const META_INTRO_SEEN := "intro_seen"
 var current_phase: ShiftPhase = ShiftPhase.INTRO
 var total_seconds: float = START_TIME
 var work_progress: float = 0.0
-var auto_clicker_rate: float = 0.0
+var cooling_level: float = 0.0
 
 var heat: float = 0.0
 var is_overheated: bool = false
@@ -180,7 +181,7 @@ var infiltration_prompts: Array[Dictionary] = [
 var scripted_events: Array[Dictionary] = [
 	{"time": 34200.0, "type": "flicker"},        
 	{"time": 37800.0, "type": "fake_update"},    
-	{"time": 41400.0, "type": "desktop_hijack"}, # <--- NEW HORROR EVENT: Desktop Fake-Out at 11:30 AM!
+	{"time": 41400.0, "type": "desktop_hijack"},
 	{"time": 43200.0, "type": "blackout"},       
 	{"time": 47700.0, "type": "flicker"},        
 	{"time": 55800.0, "type": "blackout"},       
@@ -224,6 +225,7 @@ var intro_texts: Array[String] = [
 	"[color=yellow]• PROTOCOL 1 (THERMAL): Maintain a steady rhythm. Frantic spam-clicking will overheat the processor and trigger a 2.5s lockout.[/color]",
 	"[color=red]• PROTOCOL 2 (INTEGRITY): Clear error pop-ups instantly. Allowing a swarm to accumulate will corrupt your progress and roll back time.[/color]",
 	"[color=cyan]• PROTOCOL 3 (EFFICIENCY): Allocate surplus work units toward background automation scripts when they become unlocked.[/color]",
+	"[color=yellow]• PROTOCOL 4 (OVERRIDE): Critical thermal overloads require manual binary calculation to restore mainframe stability.[/color]",
 	"You plug the terminal into the wall. It hums with static. The screen flickers to life.",
 	"It's 7:59 AM. Your shift is about to begin.",
 	"[ Tap anywhere or press Space to boot system ]"
@@ -348,7 +350,7 @@ func _input(event: InputEvent) -> void:
 			_play_jumpscare()
 			return
 		if event.keycode == KEY_F3:
-			_event_desktop_hijack() # <--- Test hotkey for desktop takeover
+			_event_desktop_hijack()
 			return
 
 	match current_phase:
@@ -372,6 +374,9 @@ func _is_confirm_event(event: InputEvent) -> bool:
 
 
 func _process(delta: float) -> void:
+	if is_instance_valid(active_minigame):
+		return
+
 	match current_phase:
 		ShiftPhase.INTRO:
 			_process_intro(delta)
@@ -386,11 +391,7 @@ func _process(delta: float) -> void:
 	_update_hazards(delta)
 	_update_story_events()
 
-	if not _update_corruption(delta):
-		return
-
-	if auto_clicker_rate > 0.0 and active_errors < max_allowed_errors and not cutscene_active:
-		_advance_time(auto_clicker_rate * delta)
+	_update_corruption(delta)
 
 
 func _setup_intro_ui() -> void:
@@ -532,11 +533,7 @@ func _start_shift() -> void:
 
 func _update_heat(delta: float) -> void:
 	if is_overheated:
-		overheat_timer -= delta
-		if overheat_timer <= 0.0:
-			is_overheated = false
-			log_button.modulate = Color.WHITE
-			_add_log_entry("SYSTEM COOLED. RE-ENGAGING...")
+		pass
 	elif heat > 0.0:
 		heat = maxf(0.0, heat - heat_decay_rate * delta)
 
@@ -645,27 +642,64 @@ func _begin_midday_reckoning() -> void:
 	await get_tree().create_timer(JUMPSCARE_DELAY).timeout
 	if current_phase != ShiftPhase.MIDDAY:
 		return
+		
 	await _play_jumpscare()
+	
 	if current_phase != ShiftPhase.MIDDAY:
 		return
 
-	_play_cutscene_voice()
-
 	var dynamic_reckoning: Array[Dictionary] = [
-		{"text": "[color=red]>>> KERNEL PANIC: CONNECTION HIJACKED.[/color]", "delay": 2.0},
-		{"text": "[color=gray]Did you really think you could run away from what you broke?[/color]", "delay": 3.0},
-		{"text": "[color=red]We see the router pinging from " + player_location + ". You aren't as hidden as you think.[/color]", "delay": 3.5},
-		{"text": "[color=white]Every click you made today wasn't data entry. It was a countdown.[/color]", "delay": 3.5},
-		{"text": "[color=red]I am not a virus. I am your past, and I am finally catching up.[/color]", "delay": 4.0},
-		{"text": "[color=yellow]----------------------------------------------------[/color]\n[color=red]STATUS: ANOMALOUS. THERE IS NO WAY OUT OF THIS SHIFT.[/color]", "delay": 3.0},
+		{
+			"text": "[color=red]>>> KERNEL PANIC: CONNECTION HIJACKED.[/color]",
+			"audio": "res://audio/Cutscene/Reckoning_01.mp3", 
+			"min_delay": 2.0
+		},
+		{
+			"text": "[color=gray]Did you really think you could run away from what you broke?[/color]",
+			"audio": "res://audio/Cutscene/VoiceTerror1.mp3",
+			"min_delay": 3.0
+		},
+		{
+			"text": "[color=red]You change your phone, you change your name you thought you were safe : pinging location at " + player_location + ". You aren't as hidden as you think.[/color]",
+			"audio": "res://audio/Cutscene/VoiceTerror2.mp3",
+			"min_delay": 3.5
+		},
+		{
+			"text": "[color=white]Every click you made today wasn't data entry. It was a countdown.[/color]",
+			"audio": "res://audio/Cutscene/VoiceTerror3.mp3",
+			"min_delay": 3.5
+		},
+		{
+			"text": "[color=red]I am not a virus. I am your past, and I am finally catching up.[/color]",
+			"audio": "res://audio/Cutscene/VoiceTerror4.mp3",
+			"min_delay": 4.0
+		},
+		{
+			"text": "[color=yellow]----------------------------------------------------[/color]\n[color=red]STATUS: ANOMALOUS. THERE IS NO WAY OUT OF THIS SHIFT.[/color]",
+			"audio": "", 
+			"min_delay": 3.0
+		},
 	]
 
 	for line in dynamic_reckoning:
 		if current_phase != ShiftPhase.MIDDAY:
 			return
+			
 		_add_log_entry(line["text"])
-		await get_tree().create_timer(line["delay"]).timeout
-
+		
+		var audio_path: String = line.get("audio", "")
+		var stream: AudioStream = _load_stream(audio_path) if not audio_path.is_empty() else null
+		
+		if stream:
+			var voice_player := _play_one_shot(stream)
+			var clip_length := stream.get_length()
+			var wait_time := maxf(float(line["min_delay"]), clip_length + 0.4)
+			await get_tree().create_timer(wait_time).timeout
+			if is_instance_valid(voice_player):
+				voice_player.queue_free()
+		else:
+			await get_tree().create_timer(float(line["min_delay"])).timeout
+			
 	if current_phase != ShiftPhase.MIDDAY:
 		return
 
@@ -677,18 +711,6 @@ func _begin_midday_reckoning() -> void:
 	bg_rect.color = Color("#14191c")
 	glitch_overlay.color = Color(1, 0, 0, 0.08)
 	_add_log_entry("\n[color=cyan]-- TERMINAL FORCED OPEN. CONTINUE YOUR WORK. --[/color]")
-
-
-func _play_cutscene_voice() -> void:
-	for idx in CUTSCENE_VOICE_PLAYLIST:
-		if idx >= cutscene_voice_over.size():
-			continue
-		var player := _play_one_shot(cutscene_voice_over[idx])
-		if player == null:
-			continue
-		await player.finished
-		if current_phase != ShiftPhase.MIDDAY:
-			return
 
 
 func _get_jumpscare_texture() -> Texture2D:
@@ -772,14 +794,18 @@ func _on_log_button_pressed() -> void:
 		return
 
 	manual_clicks += 1
-	heat += heat_per_click
+	
+	var effective_heat_per_click := maxf(1.0, heat_per_click - (cooling_level * COOLING_REDUCTION))
+	heat += effective_heat_per_click
+	
 	if heat >= max_heat:
 		heat = max_heat
 		is_overheated = true
 		total_overheats += 1
-		overheat_timer = overheat_duration
 		log_button.modulate = Color.RED
-		_add_log_entry("[color=red]CRITICAL WARNING: CPU OVERHEAT! LOCKED OUT FOR %.1fs[/color]" % overheat_duration)
+		_add_log_entry("[color=red]CRITICAL WARNING: CPU OVERHEAT! MANUAL OVERRIDE REQUIRED.[/color]")
+		
+		_trigger_binary_minigame()
 		return
 
 	_squish_log_button()
@@ -850,7 +876,7 @@ func _flee_button() -> void:
 
 
 func _check_upgrade_availability() -> void:
-	if btn_auto.disabled and auto_clicker_rate == 0.0 and work_progress >= auto_cost:
+	if btn_auto.disabled and cooling_level < max_cooling_level and work_progress >= auto_cost:
 		btn_auto.disabled = false
 	if btn_multi.disabled and seconds_per_click <= BASE_SECONDS_PER_CLICK and work_progress >= multi_cost:
 		btn_multi.disabled = false
@@ -858,18 +884,28 @@ func _check_upgrade_availability() -> void:
 
 func _on_buy_auto_pressed() -> void:
 	_play_sfx(clicker)
-	if work_progress >= auto_cost:
-		auto_clicker_rate += AUTO_RATE_BONUS
-		_add_log_entry("UPGRADE PURCHASED: AutoScript.vbs installed.")
+	if work_progress >= auto_cost and cooling_level < max_cooling_level:
+		work_progress = maxf(0.0, work_progress - auto_cost)
+		total_seconds = START_TIME + work_progress
+		
+		cooling_level = 1.0
 		btn_auto.disabled = true
+		
+		_update_ui()
+		_add_log_entry("[color=yellow]UPGRADE PURCHASED: LiquidCooling.sys (-%ds shift time).[/color]" % int(auto_cost))
 
 
 func _on_buy_multi_pressed() -> void:
 	_play_sfx(clicker)
-	if work_progress >= multi_cost:
+	if work_progress >= multi_cost and seconds_per_click <= BASE_SECONDS_PER_CLICK:
+		work_progress = maxf(0.0, work_progress - multi_cost)
+		total_seconds = START_TIME + work_progress
+		
 		seconds_per_click += MULTI_CLICK_BONUS
-		_add_log_entry("UPGRADE PURCHASED: Overclock CPU executed.")
 		btn_multi.disabled = true
+		
+		_update_ui()
+		_add_log_entry("[color=yellow]UPGRADE PURCHASED: Overclock CPU (-%ds shift time).[/color]" % int(multi_cost))
 
 
 func _spawn_error_window() -> void:
@@ -1104,11 +1140,9 @@ func _event_desktop_hijack() -> void:
 	cutscene_active = true
 	_add_log_entry("[color=red]CRITICAL EXCEPTION: DESKTOP SHELL HIJACKED.[/color]")
 
-	# 1. Save current window & UI state so we can restore it seamlessly
 	var was_fullscreen := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	var was_glitch_visible := glitch_overlay.visible
 
-	# 2. Hide all game visuals so the screen becomes 100% see-through
 	$Terminal.visible = false
 	$UpgradesBar.visible = false
 	bg_rect.visible = false
@@ -1116,13 +1150,11 @@ func _event_desktop_hijack() -> void:
 	popup_container.visible = false
 	peripheral_container.visible = false
 
-	# 3. Make the window borderless, maximized, and transparent
 	get_tree().root.transparent_bg = true
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_TRANSPARENT, true)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED)
 
-	# Grab the player's actual OS username for extra fourth-wall dread
 	var pc_user := OS.get_environment("USERNAME")
 	if pc_user.is_empty():
 		pc_user = OS.get_environment("USER")
@@ -1130,16 +1162,13 @@ func _event_desktop_hijack() -> void:
 		pc_user = "USER"
 	pc_user = pc_user.to_upper()
 
-	# 4. Create the overlay container over their real desktop
 	var hijack_layer := Control.new()
 	hijack_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	hijack_layer.z_index = 500
 	add_child(hijack_layer)
 
-	# --- PHASE 1: THE FAKE CRASH (1.2s of dead silence staring at their desktop) ---
 	await get_tree().create_timer(1.2).timeout
 
-	# --- PHASE 2: THE TRACE (Center box locks onto their location & name) ---
 	var center_box := PanelContainer.new()
 	center_box.custom_minimum_size = Vector2(440, 120)
 	center_box.position = Vector2((size.x - 440.0) / 2.0, (size.y - 120.0) / 2.0)
@@ -1169,7 +1198,6 @@ func _event_desktop_hijack() -> void:
 
 	await get_tree().create_timer(1.5).timeout
 
-	# --- PHASE 3: THE SWARM (Rapidly spam creepy boxes across their real screen) ---
 	var creepy_messages: Array[String] = [
 		"TRACED TO: " + player_location,
 		"NICE DESKTOP, " + pc_user + ".",
@@ -1208,12 +1236,10 @@ func _event_desktop_hijack() -> void:
 		_play_sfx(clicker_v2)
 		await get_tree().create_timer(0.22).timeout
 
-	# Climax audio hit + hold on the chaos
 	if jumpscare_audio_player:
 		jumpscare_audio_player.play()
 	await get_tree().create_timer(2.0).timeout
 
-	# --- PHASE 4: SNAP BACK TO THE GAME ---
 	hijack_layer.queue_free()
 
 	get_tree().root.transparent_bg = false
@@ -1224,7 +1250,6 @@ func _event_desktop_hijack() -> void:
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
-	# Restore all game visuals right where they left off
 	$Terminal.visible = true
 	$UpgradesBar.visible = true
 	bg_rect.visible = true
@@ -1235,6 +1260,7 @@ func _event_desktop_hijack() -> void:
 	cutscene_active = false
 	_add_log_entry("[color=red]SESSION RESTORED. WE NEVER LEFT, " + pc_user + ".[/color]")
 	
+
 func _trigger_game_over(reason: String) -> void:
 	current_phase = ShiftPhase.GAMEOVER
 	time_label.text = "00:00:00 -- [CRASHED]"
@@ -1348,12 +1374,13 @@ func _play_one_shot(stream: AudioStream) -> AudioStreamPlayer:
 		return null
 	var player := AudioStreamPlayer.new()
 	player.stream = stream
+	player.volume_db = 20.0 
+	
 	add_child(player)
 	player.finished.connect(player.queue_free)
 	player.play()
 	return player
-
-
+	
 func _reset_pacing() -> void:
 	in_lull = false
 	pacing_timer = 0.0
@@ -1567,7 +1594,6 @@ func _show_ending(ending_id: String) -> void:
 	var restart_btn := _make_button("RESTART SHIFT", Vector2(220, 60), color)
 	restart_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	restart_btn.pressed.connect(func(): get_tree().reload_current_scene())
-	vbox.add_title = title.text
 	vbox.add_child(restart_btn)
 
 
@@ -1588,3 +1614,28 @@ func _record_ending(ending_id: String) -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("progress", "endings", plain)
 	cfg.save(SAVE_PATH)
+
+var active_minigame: Control = null
+
+func _trigger_binary_minigame() -> void:
+	if is_instance_valid(active_minigame):
+		return
+		
+	log_button.disabled = true
+	
+	var minigame_scene = load("res://MiniGames/BinaryGuess/binary_guess.tscn")
+	if minigame_scene:
+		active_minigame = minigame_scene.instantiate()
+		active_minigame.z_index = 350
+		
+		active_minigame.puzzle_solved.connect(func():
+			is_overheated = false
+			heat = 0.0
+			log_button.modulate = Color.WHITE
+			log_button.disabled = false
+			
+			_add_log_entry("[color=green]SYSTEM OVERRIDE ACCEPTED. RESUMING SHIFT...[/color]")
+			active_minigame = null
+		)
+		
+		add_child(active_minigame)
